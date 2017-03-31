@@ -25,9 +25,9 @@ Control word is a bit vector that the `Controller` uses to fill the signals of e
 We first define the bit vector representations for each component's signals and and then design the `ControlWord` using these newly-defined bit vectors. So starting from the components:
 
 #### ALU Flags 
-We have `CSet`, `CReset`, `ZSet` and `SRload`. As only one of these signals will be high during an operation we use a **2Bit** bit vector to represent these signals. This 2Bit vector shows that:
+ We have `CSet`, `CReset`, `ZSet` and `SRload`. As only one of these signals will be high during an operation we use a **2Bit** bit vector to represent these signals. This 2Bit vector shows that:
 
-| Bit Vector (2:0) | High Signal |
+| Bit Vector (1:0) | High Signal |
 | --- | --- |
 | `00` | CSet |
 | `01` | CReset |
@@ -35,8 +35,36 @@ We have `CSet`, `CReset`, `ZSet` and `SRload`. As only one of these signals will
 | `11` | SRload |
 
 #### Arithmetic Unit
+We have `AandB`, `AorB`, `NotB` , `AaddB` , `AsubB` , `AmulB` , `AcmpB` , `ShrB` , `ShlB`, `AxorB` , `Random` , `SqrB` , `AdivB` , `SinB` , `CosB` , `TanB` and `CotB` . As only one of these signals will be high during an operation we use a **5Bit** bit vector to represent these signals. This 5Bit vector shows that:
+| Bit Vector (4:0) | High Signal |
+| --- | --- |
+| `00000` | AandB |
+| `00001` | AorB |
+| `00010` |  NotB |
+| `00011` | Aadd |
+| `00100` | AsubB |
+| `00101` | AmulB |
+| `00110` | AcmpB |
+| `00111` | ShrB |
+| `01000` | ShlB |
+| `01001` | AxorB |
+| `01010` | Random |
+| `01011` | SqrB |
+| `01101` | AdivB |
+| `01110` | SinB |
+| `01111` | CosB |
+| `10000` | TanB |
+| `10001` | CotB |
 
 #### Address Logic
+We have `ResetPC` , `PCplus1` , `PCplus0` , `R0plus1` and `R0plus0` . As only one of these signals will be high during an operation we use a **3Bit** bit vector to represent these signals. This 3Bit vector shows that:
+| Bit Vector (2:0) | High Signal |
+| --- | --- |
+| `000` | ResetP |
+| `001` | PCplus1 |
+| `010` | PCplus0 |
+| `011` | R0plus1 |
+| `100` | R0plus0 |
 
 #### Register File
 
