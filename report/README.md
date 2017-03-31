@@ -10,7 +10,7 @@ have to design some new mnemonic and bit vector representation. The next table i
 | --- | :---: | --- |
 | **xor** (xor registers) | `0000-10-11-0-XXX-D-S` | Rd **<=** Rd **xor** RS |
 | **twc** (2s complement) | `0000-10-11-1-XXX-D-S` | Rd **<=** **~** Rs **+** 1 |
-| **rnd** (generate random 16bit) | `0000-11-00-0-XXX-D` | Rd **<=** random 16bit |
+| **rnd** (generate random 16bit) | `0000-11-00-0-XXX-D-XX` | Rd **<=** random 16bit |
 | **sqr** (calculate square root) | `0000-11-00-1-XXX-D-S` | Rd **<=** **sqrt(** Rs **)**|
 | **div** (calculate division) | `0000-11-01-0-XXX-D-S` | Rd **<=** Rs **/** Rd |
 | **sin** (calculate sinus) | `0000-11-01-1-XXX-D-S` | Rd **<=** **sin(** Rs **)**|
