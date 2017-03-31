@@ -8,15 +8,15 @@ have to design some new mnemonic and bit vector representation. The next table i
 
 | Mnemonic        | Bits (15:0)           | RTL notation  |
 | --- | :---: | --- |
-| **xor** (xor registers) | `0000-10-11-0-D-S` | Rd **<=** Rd **xor** RS |
-| **twc** (2s complement) | `0000-10-11-1-D-S` | Rd **<=** **~** Rs **+** 1 |
-| **rnd** (generate random 16bit) | `0000-11-00-0-D` | Rd **<=** random 16bit |
-| **sqr** (calculate square root) | `0000-11-00-1-D-S` | Rd **<=** **sqrt(** Rs **)**|
-| **div** (calculate division) | `0000-11-01-0-D-S` | Rd **<=** Rs **/** Rd |
-| **sin** (calculate sinus) | `0000-11-01-1-D-S` | Rd **<=** **sin(** Rs **)**|
-| **cos** (calculate co-sinus) | `0000-11-10-0-D-S` | Rd **<=** **cos(** Rs **)** |
-| **tan** (calculate tangent) | `0000-11-10-1-D-S` | Rd **<=** **tan(** Rs **)** |
-| **cot** (calculate co-tangent) | `0000-11-11-0-D-S` | Rd **<=** **cot(** Rs **)** |
+| **xor** (xor registers) | `0000-10-11-0-XXX-D-S` | Rd **<=** Rd **xor** RS |
+| **twc** (2s complement) | `0000-10-11-1-XXX-D-S` | Rd **<=** **~** Rs **+** 1 |
+| **rnd** (generate random 16bit) | `0000-11-00-0-XXX-D` | Rd **<=** random 16bit |
+| **sqr** (calculate square root) | `0000-11-00-1-XXX-D-S` | Rd **<=** **sqrt(** Rs **)**|
+| **div** (calculate division) | `0000-11-01-0-XXX-D-S` | Rd **<=** Rs **/** Rd |
+| **sin** (calculate sinus) | `0000-11-01-1-XXX-D-S` | Rd **<=** **sin(** Rs **)**|
+| **cos** (calculate co-sinus) | `0000-11-10-0-XXX-D-S` | Rd **<=** **cos(** Rs **)** |
+| **tan** (calculate tangent) | `0000-11-10-1-XXX-D-S` | Rd **<=** **tan(** Rs **)** |
+| **cot** (calculate co-tangent) | `0000-11-11-0-XXX-D-S` | Rd **<=** **cot(** Rs **)** |
 
 Here `D` and `S`  are addresses of two registers (`Rd` and `Rs`) that we will be working on.
 
