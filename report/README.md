@@ -69,8 +69,12 @@ We have `ResetPC` , `PCplus1` , `PCplus0` , `R0plus1` and `R0plus0` . As only on
 | `100` | R0plus0 |
 
 #### Register File
+We have `RFLwrite` and `RFHwrite` . As only one of these signals will be high during an operation we use a **1Bit** to represent these signals. This 1Bit shows that:
 
-#### Memory
+| Bit | High Signal |
+| --- | --- |
+| `0` | RFLwrite |
+| `1` | RFHwrit |
 
 #### Window Pointer
 
