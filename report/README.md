@@ -20,6 +20,34 @@ have to design some new mnemonic and bit vector representation. The next table i
 
 Here `D` and `S`  are addresses of two registers (`Rd` and `Rs`) that we will be working on.
 
+### Designing the `ControlWord`
+Control word is a bit vector that the `Controller` uses to fill the signals of each signal in our CPU to execute an instruction. In each clock a specific `ControlWord` is used to perform an operation in the process of executing an instruction. 
+We first define the bit vector representations for each component's signals and and then design the `ControlWord` using these newly-defined bit vectors. So starting from the components:
+
+#### ALU Flags 
+We have `CSet`, `CReset`, `ZSet` and `SRload`. As only one of these signals will be high during an operation we use a **2Bit** bit vector to represent these signals. This 2Bit vector shows that:
+
+| Bit Vector (2:0) | High Signal |
+| --- | --- |
+| `00` | CSet |
+| `01` | CReset |
+| `10` | ZSet |
+| `11` | SRload |
+
+#### Arithmetic Unit
+
+#### Address Logic
+
+#### Register File
+
+#### Memory
+
+#### Window Pointer
+
+#### Controller
+
+#### Other One-Bit signals
+
 ### Designing process of each instruction
 Here we describe how each instruction is going to be executed in the CPU using the datapath and the available components in the SAYEH computer. Here we describe and list what should be done (the operations) after decoding each instruction to execute it. 
 
