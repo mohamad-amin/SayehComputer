@@ -76,11 +76,54 @@ We have `RFLwrite` and `RFHwrite` . As only one of these signals will be high du
 | `0` | RFLwrite |
 | `1` | RFHwrit |
 
-#### Window Pointer
+#### Memory
+We have `ReadMem` and `WriteMem` signals. So as only one of these control signals should be high at one clock, we use a **1Bit** representation for this:
 
-#### Controller
+| Bit | High Signal | 
+| --- | --- |
+| `0` | ReadMem |
+| `1` | WriteMem |
+
+#### Window Pointer
+We have `WPadd` and `WPreset` signals. So as only one of these control signals should be high at one clock, we use a **1Bit** representation for this:
+
+| Bit | High Signal | 
+| --- | --- |
+| `0` | WPreset |
+| `1` | WPadd |
 
 #### Other One-Bit signals
+Here is a list of other signals that don't belong to a specific component but should be handled in control unit. These signals can't be encoded into smaller bit vectors because many of them can be high at once. In the following table you can see a list of all these signals and a small description of what they do if they're set to `1` (except `MemDataReady`).
+
+| Signal | Description | 
+| --- | --- |
+| `Address_on_Databus `| Puts the address from `Address Logic` on the `Databus`  |
+| `Rs_on_AddressUnitRSide` | Puts the data of `Rs` register on the `RSide` port of `Address Unit` |
+| `Rd_on_AddressUnitRSide` | Puts the data of `Rd` register on the `RSide` port of `Address Unit` |
+| `ALUout_on_Databus` | Puts the output of `ALU` on the `Databus`|
+| `RFRight_on_OpndBus` | Puts the data of the `Rs` register on the `OpndBus` |
+| `IR_on_LOpndBus` | Put the  |
+| `IR_on_HOpndBus` | Hello |
+| `MemDataReady` | When set to `1`, shows that the requested data from memory is available to put on the `Databus` |
+| `Shadow` | Selects either `IR[11:8]` (or `IR[3:0]` when set to `0`) as the `Register File`'s address inputs |
+| `IRload` | Puts data of the `Databus` into the `IR` register |
+
+#### Defining the Control Word
+So each signal has now been defined using a bit vector or a single bit as described above and it's time to merge these bits to create **a unique bit vector named control word** in our `control unit` to perform each operation.
+We should have:
+
+- **3** bits for the  `ALU Flag`
+- **5** bits for the `Arithmetic Unit`
+- **3** bits for the `Address logic`
+- **1** bit for the `Register File`
+- **1** bit for the `Memory`
+- **1** bit for the `Window Pointer`
+- And finally **10** bits for other one-bit signals that don't belong to a specific component.
+
+So the `ControlWord` must have **`24`** bits and is each of it's bits are defined in the above list. A simple `ControlWord` would look like this:
+```
+000-00000-000-0-0-0-0000000000
+```
 
 ### Designing process of each instruction
 Here we describe how each instruction is going to be executed in the CPU using the datapath and the available components in the SAYEH computer. Here we describe and list what should be done (the operations) after decoding each instruction to execute it. 
