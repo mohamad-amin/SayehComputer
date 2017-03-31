@@ -36,6 +36,7 @@ We first define the bit vector representations for each component's signals and 
 
 #### Arithmetic Unit
 We have `AandB`, `AorB`, `NotB` , `AaddB` , `AsubB` , `AmulB` , `AcmpB` , `ShrB` , `ShlB`, `AxorB` , `Random` , `SqrB` , `AdivB` , `SinB` , `CosB` , `TanB` and `CotB` . As only one of these signals will be high during an operation we use a **5Bit** bit vector to represent these signals. This 5Bit vector shows that:
+
 | Bit Vector (4:0) | High Signal |
 | --- | --- |
 | `00000` | AandB |
@@ -58,6 +59,7 @@ We have `AandB`, `AorB`, `NotB` , `AaddB` , `AsubB` , `AmulB` , `AcmpB` , `ShrB`
 
 #### Address Logic
 We have `ResetPC` , `PCplus1` , `PCplus0` , `R0plus1` and `R0plus0` . As only one of these signals will be high during an operation we use a **3Bit** bit vector to represent these signals. This 3Bit vector shows that:
+
 | Bit Vector (2:0) | High Signal |
 | --- | --- |
 | `000` | ResetP |
