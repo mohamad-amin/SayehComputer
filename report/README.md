@@ -69,7 +69,7 @@ We have `ResetPC` , `PCplus1` , `PCplus0` , `R0plus1` and `R0plus0` . As only on
 | `010` | PCplus0 |
 | `011` | R0plus1 |
 | `100` | R0plus0 |
-| `101` | ResetP |
+| `101` | ResetPC |
 
 #### Register File
 We have `RFLwrite` and `RFHwrite` . As only one of these signals will be high during an operation we use a **2Bit** to represent these signals. This 2Bit shows that:
