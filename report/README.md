@@ -42,7 +42,7 @@ We have `AandB`, `AorB`, `NotB` , `AaddB` , `AsubB` , `AmulB` , `AcmpB` , `ShrB`
 | --- | --- |
 | `00000` | AandB |
 | `00001` | AorB |
-| `00010` |  NotB |
+| `00010` | NotB |
 | `00011` | Aadd |
 | `00100` | AsubB |
 | `00101` | AmulB |
@@ -57,27 +57,28 @@ We have `AandB`, `AorB`, `NotB` , `AaddB` , `AsubB` , `AmulB` , `AcmpB` , `ShrB`
 | `01111` | CosB |
 | `10000` | TanB |
 | `10001` | CotB |
+| `10010` | B15to0 |
 
 #### Address Logic
 We have `ResetPC` , `PCplus1` , `PCplus0` , `R0plus1` and `R0plus0` . As only one of these signals will be high during an operation we use a **3Bit** bit vector to represent these signals. This 3Bit vector shows that:
 
 | Bit Vector (2:0) | High Signal |
 | --- | --- |
-| `000` | ResetP |
+| `000` | Nothing |
 | `001` | PCplus1 |
 | `010` | PCplus0 |
 | `011` | R0plus1 |
 | `100` | R0plus0 |
-| `101` | Nothing |
+| `101` | ResetP |
 
 #### Register File
 We have `RFLwrite` and `RFHwrite` . As only one of these signals will be high during an operation we use a **2Bit** to represent these signals. This 2Bit shows that:
 
 | Bit | High Signal |
 | --- | --- |
-| `00` | RFLwrite |
+| `00` | Nothing |
 | `01` | RFHwrite |
-| `10` | Nothing |
+| `10` | RFLwrite |
 
 
 #### Memory
@@ -85,18 +86,18 @@ We have `ReadMem` and `WriteMem` signals. So as only one of these control signal
 
 | Bit | High Signal | 
 | --- | --- |
-| `00` | ReadMem |
+| `00` | Nothing |
 | `01` | WriteMem |
-| `10` | Nothing |
+| `10` | ReadMem |
 
 #### Window Pointer
 We have `WPadd` and `WPreset` signals. So as only one of these control signals should be high at one clock, we use a **2Bit** representation for this:
 
 | Bit | High Signal | 
 | --- | --- |
-| `00` | WPreset |
+| `00` | Nothing |
 | `01` | WPadd |
-| `10` | Nothing |
+| `10` | WPreset |
 
 #### Other One-Bit signals
 Here is a list of other signals that don't belong to a specific component but should be handled in control unit. These signals can't be encoded into smaller bit vectors because many of them can be high at once. In the following table you can see a list of all these signals and a small description of what they do if they're set to `1` (except `MemDataReady`).
