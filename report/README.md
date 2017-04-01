@@ -134,7 +134,7 @@ So the `ControlWord` must have **27** bits and is each of it's bits are defined 
 ```
 
 
-### Designing how instructions are executed
+### Designing how instructions are executed (Finite State Machine)
 At first, `PC` is initialized to **20** where is the start of the instructions that will be performed by this computer. Then we follow these steps (**synchronous with positive clock edges**) to execute each instruction (actually, these are the first steps of our FSM that is going to work in our Control Unit to manage our CPU) :
 
 1. The `ControlWord` is set to `Control Word here` to allow the instruction to be loaded on the `Databus` from `Memory`. 
