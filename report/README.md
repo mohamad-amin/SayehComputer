@@ -135,12 +135,16 @@ So the `ControlWord` must have **27** bits and is each of it's bits are defined 
 
 
 ### Designing how instructions are executed
-At first, `PC` is initialized to **20** where is the start of the instructions that will be performed by this computer. Then we follow these steps (**asynchronous with clock pulses**) to execute each instruction:
+At first, `PC` is initialized to **20** where is the start of the instructions that will be performed by this computer. Then we follow these steps (**synchronous with positive clock edges**) to execute each instruction (actually, these are the first steps of our FSM that is going to work in our Control Unit to manage our CPU) :
 
-1. The `ControlWord` is set to `Control Word here` to allow the instruction to be loaded on the `Databus` from `Memory`.
-2. We wait until `MemDataReady` is one and then set the `ControlWord` to `Control Word Here` to make the `IR` register load the instruction.
-3. Then we decode the `IR`'s data in the Control Unit to see if it is two 8-bit instructions or one 16-bit instruction. If it was one 16-bit instruction, we move to the step 4, otherwise we move to the 5th step.
-4. The controller provides the 
+1. The `ControlWord` is set to `Control Word here` to allow the instruction to be loaded on the `Databus` from `Memory`. 
+2. We wait (**asynchronous from clock pulses**) until `MemDataReady` is one and then set the `ControlWord` to `Control Word Here` to make the `IR` register load the instruction.
+3. We decode the `IR`'s data in the Control Unit to see if it is two 8-bit instructions or one 16-bit instruction. If it was one 16-bit instruction, we move to the step 4, otherwise we move to the 6th step.
+4. The controller provides the corresponding `ControlWord` (one or more, depending on the instruction) based on the instruction (that is discussed in the next section) and some operations is performed based on the instruction (Actually, here we provide the corresponding state for the instruction and here we decode the instruction to execute and then we move to that state as the current state and the rest of executing the instruction is decided in that state).
+5. After completion of the instruction's execution, the controller provides `Control Word here` as the `ControlWord` to increment the `PC` register by `1` and to move to the next instructions (we return to the first state (*number `1`*), as you might've gussed). 
+6. Now that we know the data of the `IR` register consists of two 8-bit instructions **and** we're going to execute the instruction in `IR[15:8]`, the controller provides the corresponding `ControlWord` **as in state 4** to execute the first instruction.
+7. The controller provides the `ControlWord` as in step 6, **but** this time the decoding process is based on `IR[8:0]` to execute the next (AKA shadow) instruction in our 16-bit data.
+8. After completion of the both instruction's execution, the controller provides `Control Word here` as the `ControlWord` to increment the `PC` register by `1` and to move to the next instructions (again we return to the first state (*number `1`*). 
  
 ### Designing process of each instruction
 Here we describe how each instruction is going to be executed in the CPU using the datapath and the available components in the SAYEH computer. Here we describe and list what should be done (the operations) after decoding each instruction to execute it. 
