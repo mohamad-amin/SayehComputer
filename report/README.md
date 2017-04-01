@@ -126,6 +126,8 @@ We should have:
 - **2** bit for the `Window Pointer`
 - And finally **10** bits for other one-bit signals that don't belong to a specific component.
 
+**Note:** in control word these ten bits are the last ones and come in bit vector one by one (i.e. first bit in these ten bits corresponds to `Address_on_Databus` and the last bit corresponds to `IRload`)
+
 So the `ControlWord` must have **27** bits and is each of it's bits are defined in the above list. A simple `ControlWord` would look like this:
 ```
 000-00000-000-00-00-00-0000000000
