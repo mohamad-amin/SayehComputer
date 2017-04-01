@@ -74,7 +74,7 @@ We have `RFLwrite` and `RFHwrite` . As only one of these signals will be high du
 | Bit | High Signal |
 | --- | --- |
 | `0` | RFLwrite |
-| `1` | RFHwrit |
+| `1` | RFHwrite |
 
 #### Memory
 We have `ReadMem` and `WriteMem` signals. So as only one of these control signals should be high at one clock, we use a **1Bit** representation for this:
