@@ -25,14 +25,15 @@ Control word is a bit vector that the `Controller` uses to fill the signals of e
 We first define the bit vector representations for each component's signals and and then design the `ControlWord` using these newly-defined bit vectors. So starting from the components:
 
 #### ALU Flags 
- We have `CSet`, `CReset`, `ZSet` and `SRload`. As only one of these signals will be high during an operation we use a **2Bit** bit vector to represent these signals. This 2Bit vector shows that:
+ We have `CSet`, `CReset`, `ZSet` and `SRload`. As only one of these signals will be high during an operation we use a **3Bit** bit vector to represent these signals. This 3Bit vector shows that:
 
 | Bit Vector (1:0) | High Signal |
 | --- | --- |
-| `00` | CSet |
-| `01` | CReset |
-| `10` | ZSet |
-| `11` | SRload |
+| `000` | CSet |
+| `001` | CReset |
+| `010` | ZSet |
+| `011` | SRload |
+| `100` | Nothing |
 
 #### Arithmetic Unit
 We have `AandB`, `AorB`, `NotB` , `AaddB` , `AsubB` , `AmulB` , `AcmpB` , `ShrB` , `ShlB`, `AxorB` , `Random` , `SqrB` , `AdivB` , `SinB` , `CosB` , `TanB` and `CotB` . As only one of these signals will be high during an operation we use a **5Bit** bit vector to represent these signals. This 5Bit vector shows that:
@@ -67,30 +68,35 @@ We have `ResetPC` , `PCplus1` , `PCplus0` , `R0plus1` and `R0plus0` . As only on
 | `010` | PCplus0 |
 | `011` | R0plus1 |
 | `100` | R0plus0 |
+| `101` | Nothing |
 
 #### Register File
-We have `RFLwrite` and `RFHwrite` . As only one of these signals will be high during an operation we use a **1Bit** to represent these signals. This 1Bit shows that:
+We have `RFLwrite` and `RFHwrite` . As only one of these signals will be high during an operation we use a **2Bit** to represent these signals. This 2Bit shows that:
 
 | Bit | High Signal |
 | --- | --- |
-| `0` | RFLwrite |
-| `1` | RFHwrite |
+| `00` | RFLwrite |
+| `01` | RFHwrite |
+| `10` | Nothing |
+
 
 #### Memory
-We have `ReadMem` and `WriteMem` signals. So as only one of these control signals should be high at one clock, we use a **1Bit** representation for this:
+We have `ReadMem` and `WriteMem` signals. So as only one of these control signals should be high at one clock, we use a **2Bit** representation for this:
 
 | Bit | High Signal | 
 | --- | --- |
-| `0` | ReadMem |
-| `1` | WriteMem |
+| `00` | ReadMem |
+| `01` | WriteMem |
+| `10` | Nothing |
 
 #### Window Pointer
-We have `WPadd` and `WPreset` signals. So as only one of these control signals should be high at one clock, we use a **1Bit** representation for this:
+We have `WPadd` and `WPreset` signals. So as only one of these control signals should be high at one clock, we use a **2Bit** representation for this:
 
 | Bit | High Signal | 
 | --- | --- |
-| `0` | WPreset |
-| `1` | WPadd |
+| `00` | WPreset |
+| `01` | WPadd |
+| `10` | Nothing |
 
 #### Other One-Bit signals
 Here is a list of other signals that don't belong to a specific component but should be handled in control unit. These signals can't be encoded into smaller bit vectors because many of them can be high at once. In the following table you can see a list of all these signals and a small description of what they do if they're set to `1` (except `MemDataReady`).
@@ -115,14 +121,14 @@ We should have:
 - **3** bits for the  `ALU Flag`
 - **5** bits for the `Arithmetic Unit`
 - **3** bits for the `Address logic`
-- **1** bit for the `Register File`
-- **1** bit for the `Memory`
-- **1** bit for the `Window Pointer`
+- **2** bit for the `Register File`
+- **2** bit for the `Memory`
+- **2** bit for the `Window Pointer`
 - And finally **10** bits for other one-bit signals that don't belong to a specific component.
 
-So the `ControlWord` must have **`24`** bits and is each of it's bits are defined in the above list. A simple `ControlWord` would look like this:
+So the `ControlWord` must have **27** bits and is each of it's bits are defined in the above list. A simple `ControlWord` would look like this:
 ```
-000-00000-000-0-0-0-0000000000
+000-00000-000-00-00-00-0000000000
 ```
 
 ### Designing process of each instruction
