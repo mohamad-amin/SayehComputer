@@ -141,7 +141,7 @@ Here we describe how each instruction is going to be executed in the CPU using t
 #### Clear Window Pointer `nop`
 
 #### **Move Register** `mvr` (0001-D-S)
-We need to clocks to execute this operation. In the first clock we move the data of the `Rd` register to `DataBus` and in the second clock we move the data in the `DataBus` to the `Rd` register. So in the first clock we:
+We need to clocks to execute this operation. In the first clock we move the data of the `Rs` register to `DataBus` and in the second clock we move the data in the `DataBus` to the `Rd` register. So in the first clock we:
 
 - Set `shadow` to `1` to let `IROut[11:8]` go to `Right` input of `RegisterFile` as selection bits for `Rd` and `Rs`  registers that are defined by `D` and `S` in instruction bit representation.
 - Set `B15to0` and `ALUout_on_Databus` to `1` to send the data of the `Rs` register to the `DataBus` through the `ALU`.
@@ -162,7 +162,8 @@ Control Word here
 ```
 
 
-#### Load Addressed `nop`
+#### **Load Addressed** `lda` (0010-D-S)
+We need to clocks to execute this operation. In the first clock we move the address of the `Rs` register to `DataBus` and in the second clock we move the data in the `DataBus` to the `Rd` register. So in the first clock we:
 
 #### Store Addressed `nop`
 
