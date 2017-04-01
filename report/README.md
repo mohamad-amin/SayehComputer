@@ -133,6 +133,15 @@ So the `ControlWord` must have **27** bits and is each of it's bits are defined 
 000-00000-000-00-00-00-0000000000
 ```
 
+
+### Designing how instructions are executed
+At first, `PC` is initialized to **20** where is the start of the instructions that will be performed by this computer. Then we follow these steps (**asynchronous with clock pulses**) to execute each instruction:
+
+1. The `ControlWord` is set to `Control Word here` to allow the instruction to be loaded on the `Databus` from `Memory`.
+2. We wait until `MemDataReady` is one and then set the `ControlWord` to `Control Word Here` to make the `IR` register load the instruction.
+3. Then we decode the `IR`'s data in the Control Unit to see if it is two 8-bit instructions or one 16-bit instruction. If it was one 16-bit instruction, we move to the step 4, otherwise we move to the 5th step.
+4. The controller provides the 
+ 
 ### Designing process of each instruction
 Here we describe how each instruction is going to be executed in the CPU using the datapath and the available components in the SAYEH computer. Here we describe and list what should be done (the operations) after decoding each instruction to execute it. 
 
