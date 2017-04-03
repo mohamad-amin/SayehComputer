@@ -156,14 +156,20 @@ We don't need to set any `ControlWord` here as we won't perform any specific ope
 So we just go to the next  step and perform the next operations.
 #### Halt Operation `hlt`
 
-#### **Set Zero Flag** `szf`
+#### **Set Zero Flag** `szf`(0000-00-10)
 The controller should set the `ZSet` flag of `ALU` to `1` to Set the zero flag. So it provides the `ControlWord` value `Control Word Here` to perform this operation in one clock.  
-#### Clear Zero Flag `nop`
 
-#### **Set Carry Flag** `scf`
+#### **Clear Zero Flag** `czf`(0000-00-11)
+The controller should set the `ZReset` flag of `ALU` to `1` to clear the zero flag.  So it provides the `ControlWord` value `Control Word Here` to perform this operation in one clock.  
+
+#### **Set Carry Flag** `scf`(0000-01-00)
 The controller should set the `CSet` flag of `ALU` to `1` to Set the zero flag. So it provides the `ControlWord` value `Control Word Here` to perform this operation in one clock.  
 
-#### Clear Window Pointer `nop`
+#### **Clear Carry Flag** `scf`(0000-01-00)
+The controller should set the `CReset` flag of `ALU` to `1` to Reset the zero flag. So it provides the `ControlWord` value `Control Word Here` to perform this operation in one clock.  
+
+#### **Clear Window Pointer** `cwp`(0000-01-10)
+The controller should set the `WPReset` flag of `WP` to `1` to clear the window pointer. So it provides the `ControlWord` value `Control Word Here` to perform this operation in one clock.  
 
 #### **Move Register** `mvr` (0001-D-S)
 We need to clocks to execute this operation. In the first clock we move the data of the `Rs` register to `DataBus` and in the second clock we move the data in the `DataBus` to the `Rd` register. So in the first clock we:
@@ -198,23 +204,28 @@ We need two clocks to execute operation. In the first clock. In the first clock 
 
 #### Output From Port `nop`
 
-#### AND Registers `nop`
+#### **AND Registers** `and`(0110-D-S)
+The controller should set the `AandB` flag of `ALU` to `1` to do and operation on Rs and Rd.the result of AlU goes to DataBus and the controller should set the `RFLwrite` and `RFHwrite` falg of `Register File` to '1' to save the result in Rd (it all happens in one clock because the ALU is combinational circuit), So it provides the `ControlWord` value `Control Word Here` to perform this operation in one clock.  
 
 #### OR Registers `nop`
 
-#### NOT Register `nop`
+#### NOT Register `not`(1000-D-S)
+The controller should set the `NotB` flag of `ALU` to `1` to do not operation on Rs.the result of AlU goes to DataBus and the controller should set the `RFLwrite` and `RFHwrite` falg of `Register File` to '1' to save the result in Rd , So it provides the `ControlWord` value `Control Word Here` to perform this operation in one clock.
 
 #### Shift Left `nop`
 
-#### Shift Right `nop`
+#### Shift Right `shr`(1010-D-S)
+The controller should set the `ShrB` flag of `ALU` to `1` to do shift right operation on Rs.the result of AlU goes to DataBus and the controller should set the `RFLwrite` and `RFHwrite` falg of `Register File` to '1' to save the result in Rd , So it provides the `ControlWord` value `Control Word Here` to perform this operation in one clock.
 
 #### Add Registers `nop`
 
-#### Subtract Registers `nop`
+#### Subtract Registers `sub`(1100-D-S)
+The controller should set the `AsubB` flag of `ALU` to `1` to calculate Rd-Rs-C .the result of AlU goes to DataBus and the controller should set the `RFLwrite` and `RFHwrite` falg of `Register File` to '1' to save the result in Rd , So it provides the `ControlWord` value `Control Word Here` to perform this operation in one clock.
 
 #### Multiply Registers `nop`
 
-#### Compare`nop`
+#### Compare`cmp`(1110-D-S)
+The controller should set the `AsubB` flag of `ALU` to `1` to calculate Rd-Rs-C .the result of AlU goes to DataBus and the controller should set the `RFLwrite` and `RFHwrite` falg of `Register File` to '1' to save the result in Rd , So it provides the `ControlWord` value `Control Word Here` to perform this operation in one clock.
 
 #### OR Registers `nop`
 
