@@ -29,11 +29,11 @@ We first define the bit vector representations for each component's signals and 
 
 | Bit Vector (1:0) | High Signal |
 | --- | --- |
-| `000` | CSet |
+| `000` | Nothing |
 | `001` | CReset |
 | `010` | ZSet |
 | `011` | SRload |
-| `100` | Nothing |
+| `100` | CSet |
 
 #### Arithmetic Unit
 We have `AandB`, `AorB`, `NotB` , `AaddB` , `AsubB` , `AmulB` , `AcmpB` , `ShrB` , `ShlB`, `AxorB` , `Random` , `SqrB` , `AdivB` , `SinB` , `CosB` , `TanB` and `CotB` . As only one of these signals will be high during an operation we use a **5Bit** bit vector to represent these signals. This 5Bit vector shows that:
@@ -113,6 +113,7 @@ Here is a list of other signals that don't belong to a specific component but sh
 | `IR_on_HOpndBus` | Hello |
 | `MemDataReady` | When set to `1`, shows that the requested data from memory is available to put on the `Databus` |
 | `Shadow` | Selects either `IR[11:8]` (or `IR[3:0]` when set to `0`) as the `Register File`'s address inputs |
+| `EnablePC` | Regular enable flag for the `PC` register |
 | `IRload` | Puts data of the `Databus` into the `IR` register |
 
 #### Defining the Control Word
@@ -125,13 +126,13 @@ We should have:
 - **2** bit for the `Register File`
 - **2** bit for the `Memory`
 - **2** bit for the `Window Pointer`
-- And finally **10** bits for other one-bit signals that don't belong to a specific component.
+- And finally **11** bits for other one-bit signals that don't belong to a specific component.
 
 **Note:** in control word these ten bits are the last ones and come in bit vector one by one (i.e. first bit in these ten bits corresponds to `Address_on_Databus` and the last bit corresponds to `IRload`)
 
 So the `ControlWord` must have **27** bits and is each of it's bits are defined in the above list. A simple `ControlWord` would look like this:
 ```
-000-00000-000-00-00-00-0000000000
+000-00000-000-00-00-00-00000000000
 ```
 
 
@@ -148,6 +149,7 @@ At first, `PC` is initialized to **20** where is the start of the instructions t
 7. The controller provides the `ControlWord` as in step 6, **but** this time the decoding process is based on `IR[7:0]` (because of `ShadowHigh = 0` flag) to execute the next (AKA shadow) instruction in our 16-bit data.
 8. After completion of the both instruction's execution, the controller provides `Control Word here` as the `ControlWord` to increment the `PC` register by `1` and to move to the next instructions (again we return to the first state (*number `1`*). 
  
+**Important Note:** In instructions that are made up of two 8-bit instructions, the `shadow` flag is as the same as the `ShadowHigh` flag. In 16-bit instructions though, the `shadow` flag is always set to `0`.
 ### Designing process of each instruction
 Here we describe how each instruction is going to be executed in the CPU using the datapath and the available components in the SAYEH computer. Here we describe and list what should be done (the operations) after decoding each instruction to execute it. 
 
@@ -197,8 +199,29 @@ Control Word here
 We need two clocks to execute this operation. In the first clock we move the address of the `Rs` register to `DataBus` and in the second clock we move the data in the `DataBus` to the `Rd` register. So in the first clock we:
 
 #### Store Addressed `sta`(0011-D-S)
-We need two clocks to execute operation. In the first clock. In the first clock the address of `(Rd)` must be put on the `AddressLogic` wire and indicate to the `address` signal of our `memory` and in the second clock the data of `Rs` register should be put in the `memory` with the indicated `address`.
+We need two clocks to execute operation. In the first clock the address of `(Rd)` must be put on the `AddressLogic` wire and indicate to the `address` signal of our `memory` component and then in the second clock the data of `Rs` register should be put in the `memory` with the indicated `address`.
 
+So for the first clock the control unit:
+
+- Sets `Rd_on_AddressUnitRSide` to `1` to put the data of `Rd` register on the `RSide` wire of `AddressLogic`.
+- Sets `EnablePC` to `1` to prevent contents of the `PC` to get replaced by the data of `Rd` register.
+- Sets the `Rplus0` signal of `AddressLogic` to `1` to set the data of the `RSide` wire as `AddressUnit`'s output.
+
+So the  `ControlWord` for the first clock would look like this:
+```
+Control Word here
+```
+
+And in the next clock the control unit:
+
+- Sets `B15to0` flag of `ALU` to `1` to put `Rs` register's data on `ALU` output.
+- Sets `ALUout_on_Databus` to `1` to  put `ALU`'s output on the `Databus`.
+- Sets `WriteMem` flag of `Memory` to `1` to write the `Databus`'s data to `memory`.
+
+So the `ControlWord` for the second clock is:
+```
+Control Word here
+```
 
 #### Input From Port `nop`
 
@@ -353,22 +376,6 @@ Control Word here
 
 #### Compare`cmp`(1110-D-S)
 The controller should set the `AcmpB` flag of `ALU` to `1` to compare Rs and Rd  .So it provides the `ControlWord` value `Control Word Here` to perform this operation in one clock.
-
-#### OR Registers `nop`
-
-#### NOT Register `nop`
-
-#### Shift Left `nop`
-
-#### Shift Right `nop`
-
-#### Add Registers `nop`
-
-#### Subtract Registers `nop`
-
-#### Multiply Registers `nop`
-
-#### Compare`nop`
 
 #### Move Immediate Low `nop`
 
