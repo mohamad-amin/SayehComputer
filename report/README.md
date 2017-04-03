@@ -153,10 +153,10 @@ At first, `PC` is initialized to **20** where is the start of the instructions t
 ### Designing process of each instruction
 Here we describe how each instruction is going to be executed in the CPU using the datapath and the available components in the SAYEH computer. Here we describe and list what should be done (the operations) after decoding each instruction to execute it. 
 
-#### **No Operation** `nop`
+#### **No Operation** `nop` (0000-00-00)
 We don't need to set any `ControlWord` here as we won't perform any specific operation.
 So we just go to the next  step and perform the next operations.
-#### Halt Operation `hlt`
+#### Halt Operation `hlt` (0000-00-01)
 
 #### **Set Zero Flag** `szf`(0000-00-10)
 The controller should set the `ZSet` flag of `ALU` to `1` to Set the zero flag. So it provides the `ControlWord` value `Control Word Here` to perform this operation in one clock.  
@@ -167,7 +167,7 @@ The controller should set the `ZReset` flag of `ALU` to `1` to clear the zero fl
 #### **Set Carry Flag** `scf`(0000-01-00)
 The controller should set the `CSet` flag of `ALU` to `1` to Set the zero flag. So it provides the `ControlWord` value `Control Word Here` to perform this operation in one clock.  
 
-#### **Clear Carry Flag** `scf`(0000-01-00)
+#### **Clear Carry Flag** `scf`(0000-01-01)
 The controller should set the `CReset` flag of `ALU` to `1` to Reset the zero flag. So it provides the `ControlWord` value `Control Word Here` to perform this operation in one clock.  
 
 #### **Clear Window Pointer** `cwp`(0000-01-10)
@@ -194,11 +194,10 @@ And the `ControlWord` for the second clock is:
 Control Word here
 ```
 
-
 #### **Load Addressed** `lda` (0010-D-S)
 We need two clocks to execute this operation. In the first clock we move the address of the `Rs` register to `DataBus` and in the second clock we move the data in the `DataBus` to the `Rd` register. So in the first clock we:
 
-#### Store Addressed `sta`(0011-D-S)
+#### **Store Addressed** `sta`(0011-D-S)
 We need two clocks to execute operation. In the first clock the address of `(Rd)` must be put on the `AddressLogic` wire and indicate to the `address` signal of our `memory` component and then in the second clock the data of `Rs` register should be put in the `memory` with the indicated `address`.
 
 So for the first clock the control unit:
@@ -223,9 +222,11 @@ So the `ControlWord` for the second clock is:
 Control Word here
 ```
 
-#### Input From Port `nop`
+#### Input From Port `inp` (0100-D-S)
+TODO
 
-#### Output From Port `nop`
+#### Output From Port `oup` (0101-D-S)
+TODO
 
 #### **AND Registers** `and`(0110-D-S)
 We need three clocks to execute this operation:
@@ -372,19 +373,19 @@ And the `ControlWord` for the second clock is:
 Control Word here
 ```
 
-#### Multiply Registers `nop`
-
+#### Multiply Registers `mul` (1101-D-S)
+Todo	
 #### Compare`cmp`(1110-D-S)
 The controller should set the `AcmpB` flag of `ALU` to `1` to compare Rs and Rd  .So it provides the `ControlWord` value `Control Word Here` to perform this operation in one clock.
 
-#### Move Immediate Low `nop`
+#### Move Immediate Low `mil` (1111-D-00-I)
 
-#### Move Immediate High `nop`
+#### Move Immediate High `mih`(1111-D-01-I)
 
-#### Save PC `nop`
+#### Save PC `spc` (1111-D-10-I)
 
-#### Jump Addressed `nop`
-
+#### Jump Addressed `jpa` (1111-D-11-I)
+ 
 #### Jump Relative `nop`
 
 #### Branch If Zero `nop`
