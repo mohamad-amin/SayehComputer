@@ -248,7 +248,7 @@ And the `ControlWord` for the second clock is:
 Control Word here
 ```
 
-#### OR Registers `orr`(0111-D-S)
+#### **OR Registers** `orr`(0111-D-S)
 We need three clocks to execute this operation:
 In the first clock, the control unit:
 
@@ -269,7 +269,7 @@ Control Word here
 ```
 
 
-#### NOT Register `not`(1000-D-S)
+#### **NOT Register** `not`(1000-D-S)
 We need three clocks to execute this operation:
 In the first clock, the control unit:
 
@@ -290,7 +290,7 @@ Control Word here
 ```
 .
 
-#### Shift Left `shl`(1001-D-S)
+#### **Shift Left** `shl`(1001-D-S)
 We need three clocks to execute this operation:
 In the first clock, the control unit:
 
@@ -311,7 +311,7 @@ Control Word here
 ```
 
 
-#### Shift Right `shr`(1010-D-S)
+#### **Shift Right** `shr`(1010-D-S)
 We need three clocks to execute this operation:
 In the first clock, the control unit:
 
@@ -332,7 +332,7 @@ Control Word here
 ```
 
 
-#### Add Registers `add`(1011-D-S)
+#### **Add Registers** `add`(1011-D-S)
 We need three clocks to execute this operation:
 In the first clock, the control unit:
 
@@ -353,7 +353,7 @@ Control Word here
 ```
 
 
-#### Subtract Registers `sub`(1100-D-S)
+#### **Subtract Registers** `sub`(1100-D-S)
 We need three clocks to execute this operation:
 In the first clock, the control unit:
 
@@ -394,20 +394,182 @@ The controller should set the `AcmpB` flag of `ALU` to `1` to compare Rs and Rd 
 
 #### Add Window Pointer`nop`
 
-#### XOR Registers `nop`
+#### **XOR Registers** `xor`(0000-10-11-0-XXX-D-S)
+We need three clocks to execute this operation:
+In the first clock, the control unit:
 
-#### 2s Complement `nop`
+- Sets `AxorB` flag of the `ALU` to `1` to `XOR` the data of `Rs` and `Rd` reigisters.
+- Sets `ALUout_on_Databus` to `1` to put the result of `ALU` operation on the `Databus`.
 
-#### Generate Random `nop`
+So the `ControlWord` for the first clock is:
+```
+Control Word here
+```
+And then the control unit:
 
-#### Calculate Square Root `nop`
+- Sets `RFLwrite` and `RFHwrite` to `1` to enable writing to the `RegisterFile`.
 
-#### Divide Registers`nop`
+And the `ControlWord` for the second clock is:
+```
+Control Word here
+```
 
-####  Calculate Sinus`nop`
 
-#### Calculate Co-Sinus `nop`
+#### **2s Complement** `twc`(0000-10-11-1-XXX-D-S)
+We need three clocks to execute this operation:
+In the first clock, the control unit:
 
-#### Calculate Tangent `nop`
+- Sets `B2sComplement` flag of the `ALU` to `1` to `2s Complement` the data of `Rs` reigister.
+- Sets `ALUout_on_Databus` to `1` to put the result of `ALU` operation on the `Databus`.
 
-#### Calculate Co-Tangent `nop`
+So the `ControlWord` for the first clock is:
+```
+Control Word here
+```
+And then the control unit:
+
+- Sets `RFLwrite` and `RFHwrite` to `1` to enable writing to the `RegisterFile`.
+
+And the `ControlWord` for the second clock is:
+```
+Control Word here
+```
+
+#### **Generate Random** `rnd`(0000-11-00-0-XXX-D-XX)
+We need two clocks to execute this operation:
+In the first clock, the control unit:
+
+- Sets `rand` flag of the `ALU` to `1` to Generate `Random` number .
+- Sets `ALUout_on_Databus` to `1` to put the result of `ALU` operation on the `Databus`.
+
+So the `ControlWord` for the first clock is:
+```
+Control Word here
+```
+And then the control unit:
+
+- Sets `RFLwrite` and `RFHwrite` to `1` to enable writing to the `RegisterFile`.
+
+And the `ControlWord` for the second clock is:
+```
+Control Word here
+```
+
+#### **Calculate Square Root** `sqr`(0000-11-00-1-XXX-D-S)
+We need three clocks to execute this operation:
+In the first clock, the control unit:
+
+- Sets `sqrB` flag of the `ALU` to `1` to `Square` the data of `Rs` reigister.
+- Sets `ALUout_on_Databus` to `1` to put the result of `ALU` operation on the `Databus`.
+
+So the `ControlWord` for the first clock is:
+```
+Control Word here
+```
+And then the control unit:
+
+- Sets `RFLwrite` and `RFHwrite` to `1` to enable writing to the `RegisterFile`.
+
+And the `ControlWord` for the second clock is:
+```
+Control Word here
+```
+
+#### **Divide Registers** `div`(0000-11-01-0-XXX-D-S)
+We need three clocks to execute this operation:
+In the first clock, the control unit:
+
+- Sets `AdivB` flag of the `ALU` to `1` to `Divide` the data of `Rs` and `Rd` reigisters.
+- Sets `ALUout_on_Databus` to `1` to put the result of `ALU` operation on the `Databus`.
+
+So the `ControlWord` for the first clock is:
+```
+Control Word here
+```
+And then the control unit:
+
+- Sets `RFLwrite` and `RFHwrite` to `1` to enable writing to the `RegisterFile`.
+
+And the `ControlWord` for the second clock is:
+```
+Control Word here
+```
+
+####  **Calculate Sinus** `sin`(0000-11-01-1-XXX-D-S)
+We need three clocks to execute this operation:
+In the first clock, the control unit:
+
+- Sets `sinB` flag of the `ALU` to `1` to calculate `Sinus` of the `Rs` reigister.
+- Sets `ALUout_on_Databus` to `1` to put the result of `ALU` operation on the `Databus`.
+
+So the `ControlWord` for the first clock is:
+```
+Control Word here
+```
+And then the control unit:
+
+- Sets `RFLwrite` and `RFHwrite` to `1` to enable writing to the `RegisterFile`.
+
+And the `ControlWord` for the second clock is:
+```
+Control Word here
+```
+
+#### **Calculate Co-Sinus** `cos`(0000-11-10-0-XXX-D-S)
+We need three clocks to execute this operation:
+In the first clock, the control unit:
+
+- Sets `cosB` flag of the `ALU` to `1` to calculate `Co-Sinus` of the `Rs` reigister.
+- Sets `ALUout_on_Databus` to `1` to put the result of `ALU` operation on the `Databus`.
+
+So the `ControlWord` for the first clock is:
+```
+Control Word here
+```
+And then the control unit:
+
+- Sets `RFLwrite` and `RFHwrite` to `1` to enable writing to the `RegisterFile`.
+
+And the `ControlWord` for the second clock is:
+```
+Control Word here
+```
+
+#### **Calculate Tangent** `tan`(0000-11-10-1-XXX-D-S)
+We need three clocks to execute this operation:
+In the first clock, the control unit:
+
+- Sets `tanB` flag of the `ALU` to `1` to calculate `Tangent` of the `Rs` reigister.
+- Sets `ALUout_on_Databus` to `1` to put the result of `ALU` operation on the `Databus`.
+
+So the `ControlWord` for the first clock is:
+```
+Control Word here
+```
+And then the control unit:
+
+- Sets `RFLwrite` and `RFHwrite` to `1` to enable writing to the `RegisterFile`.
+
+And the `ControlWord` for the second clock is:
+```
+Control Word here
+```
+#### **Calculate Co-Tangent** `cot`(0000-11-11-0-XXX-D-S	)
+We need three clocks to execute this operation:
+In the first clock, the control unit:
+
+- Sets `cotB` flag of the `ALU` to `1` to calculate `Co-Tangent` of the `Rs` reigister.
+- Sets `ALUout_on_Databus` to `1` to put the result of `ALU` operation on the `Databus`.
+
+So the `ControlWord` for the first clock is:
+```
+Control Word here
+```
+And then the control unit:
+
+- Sets `RFLwrite` and `RFHwrite` to `1` to enable writing to the `RegisterFile`.
+
+And the `ControlWord` for the second clock is:
+```
+Control Word here
+```
