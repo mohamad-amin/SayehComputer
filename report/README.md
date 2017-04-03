@@ -151,15 +151,17 @@ At first, `PC` is initialized to **20** where is the start of the instructions t
 ### Designing process of each instruction
 Here we describe how each instruction is going to be executed in the CPU using the datapath and the available components in the SAYEH computer. Here we describe and list what should be done (the operations) after decoding each instruction to execute it. 
 
-#### No Operation `nop`
-
+#### **No Operation** `nop`
+We don't need to set any `ControlWord` here as we won't perform any specific operation.
+So we just go to the next  step and perform the next operations.
 #### Halt Operation `hlt`
 
-#### Set Zero Flag `nop`
-
+#### **Set Zero Flag** `szf`
+The controller should set the `ZSet` flag of `ALU` to `1` to Set the zero flag. So it provides the `ControlWord` value `Control Word Here` to perform this operation in one clock.  
 #### Clear Zero Flag `nop`
 
-#### Set Carry Flag `nop`
+#### **Set Carry Flag** `scf`
+The controller should set the `CSet` flag of `ALU` to `1` to Set the zero flag. So it provides the `ControlWord` value `Control Word Here` to perform this operation in one clock.  
 
 #### Clear Window Pointer `nop`
 
@@ -188,7 +190,9 @@ Control Word here
 #### **Load Addressed** `lda` (0010-D-S)
 We need to clocks to execute this operation. In the first clock we move the address of the `Rs` register to `DataBus` and in the second clock we move the data in the `DataBus` to the `Rd` register. So in the first clock we:
 
-#### Store Addressed `nop`
+#### Store Addressed `sta`(0011-D-S)
+We need two clocks to execute operation. In the first clock. In the first clock the address of `(Rd)` must be put on the `AddressLogic` wire and indicate to the `address` signal of our `memory` and in the second clock the data of `Rs` register should be put in the `memory` with the indicated `address`.
+
 
 #### Input From Port `nop`
 
