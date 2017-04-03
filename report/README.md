@@ -393,7 +393,7 @@ The controller should set the `AcmpB` flag of `ALU` to `1` to compare Rs and Rd 
 #### Branch If Carry `nop`
 
 #### Add Window Pointer`awp`(0000-10-10-I)
-The controller should set the `WPadd` flag of `ALU` to `1` to increment `WP` .So it provides the `ControlWord` value `Control Word Here` to perform this operation in one clock.
+The controller should set the `WPadd` flag of `WP` to `1` to increment value of `WP` .So it provides the `ControlWord` value `Control Word Here` to perform this operation in one clock.
 
 #### **XOR Registers** `xor`(0000-10-11-0-XXX-D-S)
 We need three clocks to execute this operation:
