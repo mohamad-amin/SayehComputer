@@ -194,7 +194,7 @@ Control Word here
 
 
 #### **Load Addressed** `lda` (0010-D-S)
-We need to clocks to execute this operation. In the first clock we move the address of the `Rs` register to `DataBus` and in the second clock we move the data in the `DataBus` to the `Rd` register. So in the first clock we:
+We need two clocks to execute this operation. In the first clock we move the address of the `Rs` register to `DataBus` and in the second clock we move the data in the `DataBus` to the `Rd` register. So in the first clock we:
 
 #### Store Addressed `sta`(0011-D-S)
 We need two clocks to execute operation. In the first clock. In the first clock the address of `(Rd)` must be put on the `AddressLogic` wire and indicate to the `address` signal of our `memory` and in the second clock the data of `Rs` register should be put in the `memory` with the indicated `address`.
@@ -205,27 +205,154 @@ We need two clocks to execute operation. In the first clock. In the first clock 
 #### Output From Port `nop`
 
 #### **AND Registers** `and`(0110-D-S)
-The controller should set the `AandB` flag of `ALU` to `1` to do and operation on Rs and Rd.the result of AlU goes to DataBus and the controller should set the `RFLwrite` and `RFHwrite` falg of `Register File` to '1' to save the result in Rd (it all happens in one clock because the ALU is combinational circuit), So it provides the `ControlWord` value `Control Word Here` to perform this operation in one clock.  
+We need three clocks to execute this operation:
+In the first clock, the control unit:
 
-#### OR Registers `nop`
+- Sets `AandB` flag of the `ALU` to `1` to `AND` the data of `Rs` and `Rd` reigisters.
+- Sets `ALUout_on_Databus` to `1` to put the result of `ALU` operation on the `Databus`.
+
+So the `ControlWord` for the first clock is:
+```
+Control Word here
+```
+And then the control unit:
+
+- Sets `RFLwrite` and `RFHwrite` to `1` to enable writing to the `RegisterFile`.
+
+And the `ControlWord` for the second clock is:
+```
+Control Word here
+```
+
+#### OR Registers `orr`(0111-D-S)
+We need three clocks to execute this operation:
+In the first clock, the control unit:
+
+- Sets `AorB` flag of the `ALU` to `1` to `OR` the data of `Rs` and `Rd` reigisters.
+- Sets `ALUout_on_Databus` to `1` to put the result of `ALU` operation on the `Databus`.
+
+So the `ControlWord` for the first clock is:
+```
+Control Word here
+```
+And then the control unit:
+
+- Sets `RFLwrite` and `RFHwrite` to `1` to enable writing to the `RegisterFile`.
+
+And the `ControlWord` for the second clock is:
+```
+Control Word here
+```
+
 
 #### NOT Register `not`(1000-D-S)
-The controller should set the `NotB` flag of `ALU` to `1` to do not operation on Rs.the result of AlU goes to DataBus and the controller should set the `RFLwrite` and `RFHwrite` falg of `Register File` to '1' to save the result in Rd , So it provides the `ControlWord` value `Control Word Here` to perform this operation in one clock.
+We need three clocks to execute this operation:
+In the first clock, the control unit:
 
-#### Shift Left `nop`
+- Sets `NotB` flag of the `ALU` to `1` to `Not` the data of `Rs` reigister.
+- Sets `ALUout_on_Databus` to `1` to put the result of `ALU` operation on the `Databus`.
+
+So the `ControlWord` for the first clock is:
+```
+Control Word here
+```
+And then the control unit:
+
+- Sets `RFLwrite` and `RFHwrite` to `1` to enable writing to the `RegisterFile`.
+
+And the `ControlWord` for the second clock is:
+```
+Control Word here
+```
+.
+
+#### Shift Left `shl`(1001-D-S)
+We need three clocks to execute this operation:
+In the first clock, the control unit:
+
+- Sets `ShlB` flag of the `ALU` to `1` to `Shift Left` the data of `Rs` reigister.
+- Sets `ALUout_on_Databus` to `1` to put the result of `ALU` operation on the `Databus`.
+
+So the `ControlWord` for the first clock is:
+```
+Control Word here
+```
+And then the control unit:
+
+- Sets `RFLwrite` and `RFHwrite` to `1` to enable writing to the `RegisterFile`.
+
+And the `ControlWord` for the second clock is:
+```
+Control Word here
+```
+
 
 #### Shift Right `shr`(1010-D-S)
-The controller should set the `ShrB` flag of `ALU` to `1` to do shift right operation on Rs.the result of AlU goes to DataBus and the controller should set the `RFLwrite` and `RFHwrite` falg of `Register File` to '1' to save the result in Rd , So it provides the `ControlWord` value `Control Word Here` to perform this operation in one clock.
+We need three clocks to execute this operation:
+In the first clock, the control unit:
 
-#### Add Registers `nop`
+- Sets `ShrB` flag of the `ALU` to `1` to `Shift Right` the data of `Rs` reigister.
+- Sets `ALUout_on_Databus` to `1` to put the result of `ALU` operation on the `Databus`.
+
+So the `ControlWord` for the first clock is:
+```
+Control Word here
+```
+And then the control unit:
+
+- Sets `RFLwrite` and `RFHwrite` to `1` to enable writing to the `RegisterFile`.
+
+And the `ControlWord` for the second clock is:
+```
+Control Word here
+```
+
+
+#### Add Registers `add`(1011-D-S)
+We need three clocks to execute this operation:
+In the first clock, the control unit:
+
+- Sets `AaddB` flag of the `ALU` to `1` to `Add` the data of `Rs` and `Rd` reigisters.
+- Sets `ALUout_on_Databus` to `1` to put the result of `ALU` operation on the `Databus`.
+
+So the `ControlWord` for the first clock is:
+```
+Control Word here
+```
+And then the control unit:
+
+- Sets `RFLwrite` and `RFHwrite` to `1` to enable writing to the `RegisterFile`.
+
+And the `ControlWord` for the second clock is:
+```
+Control Word here
+```
+
 
 #### Subtract Registers `sub`(1100-D-S)
-The controller should set the `AsubB` flag of `ALU` to `1` to calculate Rd-Rs-C .the result of AlU goes to DataBus and the controller should set the `RFLwrite` and `RFHwrite` falg of `Register File` to '1' to save the result in Rd , So it provides the `ControlWord` value `Control Word Here` to perform this operation in one clock.
+We need three clocks to execute this operation:
+In the first clock, the control unit:
+
+- Sets `AsubB` flag of the `ALU` to `1` to `Subtract` the data of `Rs` and `Rd` reigisters.
+- Sets `ALUout_on_Databus` to `1` to put the result of `ALU` operation on the `Databus`.
+
+So the `ControlWord` for the first clock is:
+```
+Control Word here
+```
+And then the control unit:
+
+- Sets `RFLwrite` and `RFHwrite` to `1` to enable writing to the `RegisterFile`.
+
+And the `ControlWord` for the second clock is:
+```
+Control Word here
+```
 
 #### Multiply Registers `nop`
 
 #### Compare`cmp`(1110-D-S)
-The controller should set the `AsubB` flag of `ALU` to `1` to calculate Rd-Rs-C .the result of AlU goes to DataBus and the controller should set the `RFLwrite` and `RFHwrite` falg of `Register File` to '1' to save the result in Rd , So it provides the `ControlWord` value `Control Word Here` to perform this operation in one clock.
+The controller should set the `AcmpB` flag of `ALU` to `1` to compare Rs and Rd  .So it provides the `ControlWord` value `Control Word Here` to perform this operation in one clock.
 
 #### OR Registers `nop`
 
