@@ -79,6 +79,7 @@ We have `RFLwrite` and `RFHwrite` . As only one of these signals will be high du
 | `00` | Nothing |
 | `01` | RFHwrite |
 | `10` | RFLwrite |
+| `11` | Write both |
 
 
 #### Memory
