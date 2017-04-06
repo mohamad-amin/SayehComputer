@@ -43,7 +43,7 @@ We have `AandB`, `AorB`, `NotB` , `AaddB` , `AsubB` , `AmulB` , `AcmpB` , `ShrB`
 | `00000` | AandB |
 | `00001` | AorB |
 | `00010` | NotB |
-| `00011` | Aadd |
+| `00011` | AaddB |
 | `00100` | AsubB |
 | `00101` | AmulB |
 | `00110` | AcmpB |
@@ -52,12 +52,12 @@ We have `AandB`, `AorB`, `NotB` , `AaddB` , `AsubB` , `AmulB` , `AcmpB` , `ShrB`
 | `01001` | AxorB |
 | `01010` | Random |
 | `01011` | SqrB |
-| `01101` | AdivB |
-| `01110` | SinB |
-| `01111` | CosB |
-| `10000` | TanB |
-| `10001` | CotB |
-| `10010` | B15to0 |
+| `01100` | AdivB |
+| `01101` | SinB |
+| `01110` | CosB |
+| `01111` | TanB |
+| `10000` | CotB |
+| `10001` | B15to0 |
 
 #### Address Logic
 We have `ResetPC` , `PCplus1` , `PCplus0` , `R0plus1` and `R0plus0` . As only one of these signals will be high during an operation we use a **3Bit** bit vector to represent these signals. This 3Bit vector shows that:
@@ -135,7 +135,6 @@ So the `ControlWord` must have **27** bits and is each of it's bits are defined 
 ```
 000-00000-000-00-00-00-00000000000
 ```
-
 
 ### Designing how instructions are executed (Finite State Machine)
 At first, `PC` is initialized to **20** where is the start of the instructions that will be performed by this computer. Then we follow these steps (**synchronous with positive clock edges**) to execute each instruction (actually, these are the first steps of our FSM that is going to work in our Control Unit to manage our CPU) :
