@@ -64,7 +64,7 @@ We have `ResetPC` , `PCplus1` , `PCplus0` , `R0plus1` and `R0plus0` . As only on
 
 | Bit Vector (2:0) | High Signal |
 | --- | --- |
-| `000` | Nothing |
+| `000` | PCplusI |
 | `001` | PCplus1 |
 | `010` | PCplus0 |
 | `011` | R0plus1 |
