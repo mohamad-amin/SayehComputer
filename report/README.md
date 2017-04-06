@@ -102,6 +102,7 @@ We have `WPadd` and `WPreset` signals. So as only one of these control signals s
 
 #### Databus tri-state control signals
 These signals select the data to be written on the `Databus`. We use a **2Bit** representation for this:
+
 | Bit Vector (1:0) | High Signal |
 | --- | --- |
 | `00` | Nothing |
@@ -110,6 +111,7 @@ These signals select the data to be written on the `Databus`. We use a **2Bit** 
 
 #### AddressUnitRSideBus tri-state control signals
 These signals select the data to be written on the `AddressUnitRSideBus`. We use a **2Bit** representation for this:
+
 | Bit Vector (1:0) | High Signal |
 | --- | --- |
 | `00` | Nothing |
