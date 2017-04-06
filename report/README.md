@@ -94,25 +94,33 @@ We have `ReadMem` and `WriteMem` signals. So as only one of these control signal
 #### Window Pointer
 We have `WPadd` and `WPreset` signals. So as only one of these control signals should be high at one clock, we use a **2Bit** representation for this:
 
-| Bit | High Signal | 
+| Bit Vector () | High Signal | 
 | --- | --- |
 | `00` | Nothing |
 | `01` | WPadd |
 | `10` | WPreset |
+
+#### Databus tri-state control signals
+These signals select the data to be written on the `Databus`. We use a **2Bit** representation for this:
+| Bit Vector (1:0) | High Signal |
+| --- | --- |
+| `00` | Nothing |
+| `01` | ALUout_on_Databus |
+| `10` | Address_on_Databus |
+
+#### AddressUnitRSideBus tri-state control signals
+These signals select the data to be written on the `AddressUnitRSideBus`. We use a **2Bit** representation for this:
+| Bit Vector (1:0) | High Signal |
+| --- | --- |
+| `00` | Nothing |
+| `01` | Rs_on_AddressUnitRSide |
+| `10` | Rd_on_AddressUnitRSide |
 
 #### Other One-Bit signals
 Here is a list of other signals that don't belong to a specific component but should be handled in control unit. These signals can't be encoded into smaller bit vectors because many of them can be high at once. In the following table you can see a list of all these signals and a small description of what they do if they're set to `1` (except `MemDataReady`).
 
 | Signal | Description | 
 | --- | --- |
-| `Address_on_Databus `| Puts the address from `Address Logic` on the `Databus`  |
-| `Rs_on_AddressUnitRSide` | Puts the data of `Rs` register on the `RSide` port of `Address Unit` |
-| `Rd_on_AddressUnitRSide` | Puts the data of `Rd` register on the `RSide` port of `Address Unit` |
-| `ALUout_on_Databus` | Puts the output of `ALU` on the `Databus`|
-| `RFRight_on_OpndBus` | Puts the data of the `Rs` register on the `OpndBus` |
-| `IR_on_LOpndBus` | Put the  |
-| `IR_on_HOpndBus` | Hello |
-| `MemDataReady` | When set to `1`, shows that the requested data from memory is available to put on the `Databus` |
 | `Shadow` | Selects either `IR[11:8]` (or `IR[3:0]` when set to `0`) as the `Register File`'s address inputs |
 | `EnablePC` | Regular enable flag for the `PC` register |
 | `IRload` | Puts data of the `Databus` into the `IR` register |
@@ -124,16 +132,18 @@ We should have:
 - **3** bits for the  `ALU Flag`
 - **5** bits for the `Arithmetic Unit`
 - **3** bits for the `Address logic`
-- **2** bit for the `Register File`
-- **2** bit for the `Memory`
-- **2** bit for the `Window Pointer`
-- And finally **11** bits for other one-bit signals that don't belong to a specific component.
+- **2** bits for the `Register File`
+- **2** bits for the `Memory`
+- **2** bits for the `Window Pointer`
+- **2** bits for the `Databus`
+- **2** bits for the `AddressUnitRSideBus`
+- And finally **3** bits for other one-bit signals that don't belong to a specific component.
 
 **Note:** in control word these ten bits are the last ones and come in bit vector one by one (i.e. first bit in these ten bits corresponds to `Address_on_Databus` and the last bit corresponds to `IRload`)
 
-So the `ControlWord` must have **27** bits and is each of it's bits are defined in the above list. A simple `ControlWord` would look like this:
+So the `ControlWord` must have **24** bits and is each of it's bits are defined in the above list. A simple `ControlWord` would look like this:
 ```
-000-00000-000-00-00-00-00000000000
+000-00000-000-00-00-00-00-00-000
 ```
 
 ### Designing how instructions are executed (Finite State Machine)
