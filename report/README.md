@@ -27,16 +27,17 @@ We first define the bit vector representations for each component's signals and 
 #### ALU Flags 
  We have `CSet`, `CReset`, `ZSet` and `SRload`. As only one of these signals will be high during an operation we use a **3Bit** bit vector to represent these signals. This 3Bit vector shows that:
 
-| Bit Vector (1:0) | High Signal |
+| Bit Vector (2:0) | High Signal |
 | --- | --- |
 | `000` | Nothing |
 | `001` | CReset |
 | `010` | ZSet |
 | `011` | SRload |
 | `100` | CSet |
+| `101` | ZReset |
 
 #### Arithmetic Unit
-We have `AandB`, `AorB`, `NotB` , `AaddB` , `AsubB` , `AmulB` , `AcmpB` , `ShrB` , `ShlB`, `AxorB` , `Random` , `SqrB` , `AdivB` , `SinB` , `CosB` , `TanB` and `CotB` . As only one of these signals will be high during an operation we use a **5Bit** bit vector to represent these signals. This 5Bit vector shows that:
+We have `AandB`, `AorB`, `NotB` , `AaddB` , `AsubB` , `AmulB` , `AcmpB` , `ShrB` , `ShlB`, `AxorB` , `Random` , `SqrB` , `AdivB` , `SinB` , `CosB` , `TanB`, `CotB`, `TwcB`. As only one of these signals will be high during an operation we use a **5Bit** bit vector to represent these signals. This 5Bit vector shows that:
 
 | Bit Vector (4:0) | High Signal |
 | --- | --- |
@@ -58,6 +59,7 @@ We have `AandB`, `AorB`, `NotB` , `AaddB` , `AsubB` , `AmulB` , `AcmpB` , `ShrB`
 | `01111` | TanB |
 | `10000` | CotB |
 | `10001` | B15to0 |
+| `10010` | TwcB |
 
 #### Address Logic
 We have `ResetPC` , `PCplus1` , `PCplus0` , `R0plus1` and `R0plus0` . As only one of these signals will be high during an operation we use a **3Bit** bit vector to represent these signals. This 3Bit vector shows that:
@@ -74,7 +76,7 @@ We have `ResetPC` , `PCplus1` , `PCplus0` , `R0plus1` and `R0plus0` . As only on
 #### Register File
 We have `RFLwrite` and `RFHwrite` . As only one of these signals will be high during an operation we use a **2Bit** to represent these signals. This 2Bit shows that:
 
-| Bit | High Signal |
+| Bit Vector (1:0) | High Signal |
 | --- | --- |
 | `00` | Nothing |
 | `01` | RFHwrite |
@@ -85,7 +87,7 @@ We have `RFLwrite` and `RFHwrite` . As only one of these signals will be high du
 #### Memory
 We have `ReadMem` and `WriteMem` signals. So as only one of these control signals should be high at one clock, we use a **2Bit** representation for this:
 
-| Bit | High Signal | 
+| Bit Vector (1:0) | High Signal | 
 | --- | --- |
 | `00` | Nothing |
 | `01` | WriteMem |
@@ -94,7 +96,7 @@ We have `ReadMem` and `WriteMem` signals. So as only one of these control signal
 #### Window Pointer
 We have `WPadd` and `WPreset` signals. So as only one of these control signals should be high at one clock, we use a **2Bit** representation for this:
 
-| Bit Vector () | High Signal | 
+| Bit Vector (1:0) | High Signal | 
 | --- | --- |
 | `00` | Nothing |
 | `01` | WPadd |
@@ -207,32 +209,54 @@ Control Word here
 ```
 
 #### **Load Addressed** `lda` (0010-D-S)
-We need two clocks to execute this operation. In the first clock we move the address of the `Rs` register to `DataBus` and in the second clock we move the data in the `DataBus` to the `Rd` register. So in the first clock we:
-
-#### **Store Addressed** `sta`(0011-D-S)
-We need two clocks to execute operation. In the first clock the address of `(Rd)` must be put on the `AddressLogic` wire and indicate to the `address` signal of our `memory` component and then in the second clock the data of `Rs` register should be put in the `memory` with the indicated `address`.
+We need three (effective) clocks to execute operation. In the first clock the address of `(Rs)` must be put on the `AddressLogic` wire and indicate to the `address` signal of our `memory` component and then in the second clock the data of `Rs` register should be put in the `memory` with the indicated `address`.
 
 So for the first clock the control unit:
 
-- Sets `Rd_on_AddressUnitRSide` to `1` to put the data of `Rd` register on the `RSide` wire of `AddressLogic`.
-- Sets `EnablePC` to `1` to prevent contents of the `PC` to get replaced by the data of `Rd` register.
+- Sets `Rs_on_AddressUnitRSide` to `1` to put the data of `Rs` register on the `RSide` wire of `AddressLogic`.
+- Sets `EnablePC` to `0` to prevent contents of the `PC` to get replaced by the data of `Rs` register.
 - Sets the `Rplus0` signal of `AddressLogic` to `1` to set the data of the `RSide` wire as `AddressUnit`'s output.
 
 So the  `ControlWord` for the first clock would look like this:
 ```
-Control Word here
+000-10001-011-00-00-00-00-01-S00
 ```
 
 And in the next clock the control unit:
 
+- Sets `ReadMem` signal of `Memory` to `1` to read data of the given address.
+- Waits until `MemDataReady` is `1` so that it could be read onto the `Databus`.
+
+So the  `ControlWord` for the second clock would look like this:
+```
+000-10001-011-00-10-00-00-01-S00
+```
+And in the third clock it:
+
+- Sets `RFLwrite` and `RFHwrite` to `1` to write data of the `Databus` to the `Rd` register.
+
+And the last control word is:
+```
+000-10001-111-11-00-00-00-00-S00
+```
+
+#### **Store Addressed** `sta` (0011-D-S)
+We need one (effective) clock to execute operation. In this clock the address of `(Rd)` must be put on the `AddressLogic` wire and indicate to the `address` signal of our `Memory` component and the data of `Rs` register should be put into the `Memory` with the indicated `address`.
+
+So for the first clock the control unit:
+
+- Sets `Rd_on_AddressUnitRSide` to `1` to put the data of `Rd` register on the `RSide` wire of `AddressLogic`.
+- Sets `EnablePC` to `0` to prevent contents of the `PC` to get replaced by the data of `Rd` register.
+- Sets the `R0plus0` signal of `AddressLogic` to `1` to set the data of the `RSide` wire as `AddressUnit`'s output.
 - Sets `B15to0` flag of `ALU` to `1` to put `Rs` register's data on `ALU` output.
 - Sets `ALUout_on_Databus` to `1` to  put `ALU`'s output on the `Databus`.
 - Sets `WriteMem` flag of `Memory` to `1` to write the `Databus`'s data to `memory`.
 
-So the `ControlWord` for the second clock is:
+So the  `ControlWord` for the first clock would look like this:
 ```
-Control Word here
+000-10001-011-00-01-00-01-10-S00
 ```
+Then we wait until the data is written onto `Memory` (`MemDataReady` maybe).
 
 #### Input From Port `inp` (0100-D-S)
 TODO
@@ -240,16 +264,17 @@ TODO
 #### Output From Port `oup` (0101-D-S)
 TODO
 
-#### **AND Registers** `and`(0110-D-S)
-We need three clocks to execute this operation:
+#### **AND Registers** `and` (0110-D-S)
+We need two clocks to execute this operation:
 In the first clock, the control unit:
 
-- Sets `AandB` flag of the `ALU` to `1` to `AND` the data of `Rs` and `Rd` reigisters.
+- Sets `AandB` flag of the `ALU` to `1` to `And` the data of `Rs` and `Rd` registers.
 - Sets `ALUout_on_Databus` to `1` to put the result of `ALU` operation on the `Databus`.
+- Sets `SRLoad` of `ALU Flags` to `1` to enable showing flags from `ALU`.
 
 So the `ControlWord` for the first clock is:
 ```
-Control Word here
+011-00000-111-00-00-00-01-00-S00
 ```
 And then the control unit:
 
@@ -257,19 +282,20 @@ And then the control unit:
 
 And the `ControlWord` for the second clock is:
 ```
-Control Word here
+000-10001-111-11-00-00-00-00-S00
 ```
 
-#### **OR Registers** `orr`(0111-D-S)
-We need three clocks to execute this operation:
+#### **OR Registers** `orr` (0111-D-S)
+We need two clocks to execute this operation:
 In the first clock, the control unit:
 
-- Sets `AorB` flag of the `ALU` to `1` to `OR` the data of `Rs` and `Rd` reigisters.
+- Sets `AorB` flag of the `ALU` to `1` to `Or` the data of `Rs` and `Rd` registers.
 - Sets `ALUout_on_Databus` to `1` to put the result of `ALU` operation on the `Databus`.
+- Sets `SRLoad` of `ALU Flags` to `1` to enable showing flags from `ALU`.
 
 So the `ControlWord` for the first clock is:
 ```
-Control Word here
+011-00001-111-00-00-00-01-00-S00
 ```
 And then the control unit:
 
@@ -277,20 +303,20 @@ And then the control unit:
 
 And the `ControlWord` for the second clock is:
 ```
-Control Word here
+000-10001-111-11-00-00-00-00-S00
 ```
 
-
-#### **NOT Register** `not`(1000-D-S)
-We need three clocks to execute this operation:
+#### **NOT Register** `not` (1000-D-S)
+We need two clocks to execute this operation:
 In the first clock, the control unit:
 
-- Sets `NotB` flag of the `ALU` to `1` to `Not` the data of `Rs` reigister.
+- Sets `NotB` flag of the `ALU` to `1` to `Not` the data of `Rs` register.
 - Sets `ALUout_on_Databus` to `1` to put the result of `ALU` operation on the `Databus`.
+- Sets `SRLoad` of `ALU Flags` to `1` to enable showing flags from `ALU`.
 
 So the `ControlWord` for the first clock is:
 ```
-Control Word here
+011-00010-111-00-00-00-01-00-S00
 ```
 And then the control unit:
 
@@ -298,20 +324,20 @@ And then the control unit:
 
 And the `ControlWord` for the second clock is:
 ```
-Control Word here
+000-10001-111-11-00-00-00-00-S00
 ```
-.
 
-#### **Shift Left** `shl`(1001-D-S)
-We need three clocks to execute this operation:
+#### **Shift Left** `shl` (1001-D-S)
+We need two clocks to execute this operation:
 In the first clock, the control unit:
 
-- Sets `ShlB` flag of the `ALU` to `1` to `Shift Left` the data of `Rs` reigister.
+- Sets `ShlB` flag of the `ALU` to `1` to `Shift Left` the data of `Rs` register.
 - Sets `ALUout_on_Databus` to `1` to put the result of `ALU` operation on the `Databus`.
+- Sets `SRLoad` of `ALU Flags` to `1` to enable showing flags from `ALU`.
 
 So the `ControlWord` for the first clock is:
 ```
-Control Word here
+011-01000-111-00-00-00-01-00-S00
 ```
 And then the control unit:
 
@@ -319,20 +345,20 @@ And then the control unit:
 
 And the `ControlWord` for the second clock is:
 ```
-Control Word here
+000-10001-111-11-00-00-00-00-S00
 ```
 
-
-#### **Shift Right** `shr`(1010-D-S)
-We need three clocks to execute this operation:
+#### **Shift Right** `shr` (1010-D-S)
+We need two clocks to execute this operation:
 In the first clock, the control unit:
 
-- Sets `ShrB` flag of the `ALU` to `1` to `Shift Right` the data of `Rs` reigister.
+- Sets `ShrB` flag of the `ALU` to `1` to `Shift Right` the data of `Rs` register.
 - Sets `ALUout_on_Databus` to `1` to put the result of `ALU` operation on the `Databus`.
+- Sets `SRLoad` of `ALU Flags` to `1` to enable showing flags from `ALU`.
 
 So the `ControlWord` for the first clock is:
 ```
-Control Word here
+011-00111-111-00-00-00-01-00-S00
 ```
 And then the control unit:
 
@@ -340,20 +366,20 @@ And then the control unit:
 
 And the `ControlWord` for the second clock is:
 ```
-Control Word here
+000-10001-111-11-00-00-00-00-S00
 ```
 
-
-#### **Add Registers** `add`(1011-D-S)
-We need three clocks to execute this operation:
+#### **Add Registers** `add` (1011-D-S)
+We need two clocks to execute this operation:
 In the first clock, the control unit:
 
-- Sets `AaddB` flag of the `ALU` to `1` to `Add` the data of `Rs` and `Rd` reigisters.
+- Sets `AaddB` flag of the `ALU` to `1` to `Add` the data of `Rs` and `Rd` registers.
 - Sets `ALUout_on_Databus` to `1` to put the result of `ALU` operation on the `Databus`.
+- Sets `SRLoad` of `ALU Flags` to `1` to enable showing flags from `ALU`.
 
 So the `ControlWord` for the first clock is:
 ```
-Control Word here
+011-00011-111-00-00-00-01-00-S00
 ```
 And then the control unit:
 
@@ -361,20 +387,20 @@ And then the control unit:
 
 And the `ControlWord` for the second clock is:
 ```
-Control Word here
+000-10001-111-11-00-00-00-00-S00
 ```
 
-
-#### **Subtract Registers** `sub`(1100-D-S)
-We need three clocks to execute this operation:
+#### **Subtract Registers** `sub` (1100-D-S)
+We need two clocks to execute this operation:
 In the first clock, the control unit:
 
-- Sets `AsubB` flag of the `ALU` to `1` to `Subtract` the data of `Rs` and `Rd` reigisters.
+- Sets `AsubB` flag of the `ALU` to `1` to `Subtract` the data of `Rs` and `Rd` registers.
 - Sets `ALUout_on_Databus` to `1` to put the result of `ALU` operation on the `Databus`.
+- Sets `SRLoad` of `ALU Flags` to `1` to enable showing flags from `ALU`.
 
 So the `ControlWord` for the first clock is:
 ```
-Control Word here
+011-00100-111-00-00-00-01-00-S00
 ```
 And then the control unit:
 
@@ -382,13 +408,41 @@ And then the control unit:
 
 And the `ControlWord` for the second clock is:
 ```
-Control Word here
+000-10001-111-11-00-00-00-00-S00
 ```
 
-#### Multiply Registers `mul` (1101-D-S)
-Todo	
-#### Compare`cmp`(1110-D-S)
-The controller should set the `AcmpB` flag of `ALU` to `1` to compare Rs and Rd  .So it provides the `ControlWord` value `Control Word Here` to perform this operation in one clock.
+#### **Multiply Registers** `mul` (1101-D-S)
+We need two clocks to execute this operation:
+In the first clock, the control unit:
+
+- Sets `AmulB` flag of the `ALU` to `1` to `Multiply` the data of `Rs` and `Rd` registers.
+- Sets `ALUout_on_Databus` to `1` to put the result of `ALU` operation on the `Databus`.
+- Sets `SRLoad` of `ALU Flags` to `1` to enable showing flags from `ALU`.
+
+So the `ControlWord` for the first clock is:
+```
+011-00101-111-00-00-00-01-00-S00
+```
+And then the control unit:
+
+- Sets `RFLwrite` and `RFHwrite` to `1` to enable writing to the `RegisterFile`.
+
+And the `ControlWord` for the second clock is:
+```
+000-10001-111-11-00-00-00-00-S00
+```
+
+#### **Compare Registers** `cmp` (1110-D-S)
+We need one clock to execute this operation:
+So the control unit:
+
+- Sets `AcmpB` flag of the `ALU` to `1` to `Compare` the data of `Rs` and `Rd` registers.
+- Sets `SRLoad` of `ALU Flags` to `1` to enable showing flags from `ALU`.
+
+So the `ControlWord` is:
+```
+011-00110-111-00-00-00-00-00-S00
+```
 
 #### Move Immediate Low `mil` (1111-D-00-I)
 
@@ -407,16 +461,17 @@ The controller should set the `AcmpB` flag of `ALU` to `1` to compare Rs and Rd 
 #### Add Window Pointer`awp`(0000-10-10-I)
 The controller should set the `WPadd` flag of `WP` to `1` to increment value of `WP` .So it provides the `ControlWord` value `Control Word Here` to perform this operation in one clock.
 
-#### **XOR Registers** `xor`(0000-10-11-0-XXX-D-S)
-We need three clocks to execute this operation:
+#### **XOR Registers** `xor` (0000-10-11-0-XXX-D-S)
+We need two clocks to execute this operation:
 In the first clock, the control unit:
 
-- Sets `AxorB` flag of the `ALU` to `1` to `XOR` the data of `Rs` and `Rd` reigisters.
+- Sets `AxorB` flag of the `ALU` to `1` to `Xor` the data of `Rs` and `Rd` registers.
 - Sets `ALUout_on_Databus` to `1` to put the result of `ALU` operation on the `Databus`.
+- Sets `SRLoad` of `ALU Flags` to `1` to enable showing flags from `ALU`.
 
 So the `ControlWord` for the first clock is:
 ```
-Control Word here
+011-01001-111-00-00-00-01-00-S00
 ```
 And then the control unit:
 
@@ -424,20 +479,20 @@ And then the control unit:
 
 And the `ControlWord` for the second clock is:
 ```
-Control Word here
+000-10001-111-11-00-00-00-00-S00
 ```
-
 
 #### **2s Complement** `twc`(0000-10-11-1-XXX-D-S)
-We need three clocks to execute this operation:
+We need two clocks to execute this operation:
 In the first clock, the control unit:
 
-- Sets `B2sComplement` flag of the `ALU` to `1` to `2s Complement` the data of `Rs` reigister.
+- Sets `TwcB` flag of the `ALU` to `1` to `Calculate 2s Complement` of the data of `Rs` register.
 - Sets `ALUout_on_Databus` to `1` to put the result of `ALU` operation on the `Databus`.
+- Sets `SRLoad` of `ALU Flags` to `1` to enable showing flags from `ALU`.
 
 So the `ControlWord` for the first clock is:
 ```
-Control Word here
+011-10010-111-00-00-00-01-00-S00
 ```
 And then the control unit:
 
@@ -445,19 +500,20 @@ And then the control unit:
 
 And the `ControlWord` for the second clock is:
 ```
-Control Word here
+000-10001-111-11-00-00-00-00-S00
 ```
 
 #### **Generate Random** `rnd`(0000-11-00-0-XXX-D-XX)
 We need two clocks to execute this operation:
 In the first clock, the control unit:
 
-- Sets `rand` flag of the `ALU` to `1` to Generate `Random` number .
+- Sets `Rnd` flag of the `ALU` to `1` to `Generate Random Number`.
 - Sets `ALUout_on_Databus` to `1` to put the result of `ALU` operation on the `Databus`.
+- Sets `SRLoad` of `ALU Flags` to `1` to enable showing flags from `ALU`.
 
 So the `ControlWord` for the first clock is:
 ```
-Control Word here
+011-01010-111-00-00-00-01-00-S00
 ```
 And then the control unit:
 
@@ -465,19 +521,20 @@ And then the control unit:
 
 And the `ControlWord` for the second clock is:
 ```
-Control Word here
+000-10001-111-11-00-00-00-00-S00
 ```
 
 #### **Calculate Square Root** `sqr`(0000-11-00-1-XXX-D-S)
-We need three clocks to execute this operation:
+We need two clocks to execute this operation:
 In the first clock, the control unit:
 
-- Sets `sqrB` flag of the `ALU` to `1` to `Square` the data of `Rs` reigister.
+- Sets `SqrB` flag of the `ALU` to `1` to `Calculate Square Root` of the data of `Rs` register.
 - Sets `ALUout_on_Databus` to `1` to put the result of `ALU` operation on the `Databus`.
+- Sets `SRLoad` of `ALU Flags` to `1` to enable showing flags from `ALU`.
 
 So the `ControlWord` for the first clock is:
 ```
-Control Word here
+011-01011-111-00-00-00-01-00-S00
 ```
 And then the control unit:
 
@@ -485,19 +542,20 @@ And then the control unit:
 
 And the `ControlWord` for the second clock is:
 ```
-Control Word here
+000-10001-111-11-00-00-00-00-S00
 ```
 
 #### **Divide Registers** `div`(0000-11-01-0-XXX-D-S)
-We need three clocks to execute this operation:
+We need two clocks to execute this operation:
 In the first clock, the control unit:
 
-- Sets `AdivB` flag of the `ALU` to `1` to `Divide` the data of `Rs` and `Rd` reigisters.
+- Sets `AdivB` flag of the `ALU` to `1` to `Divide` the data of `Rs` and `Rd` registers.
 - Sets `ALUout_on_Databus` to `1` to put the result of `ALU` operation on the `Databus`.
+- Sets `SRLoad` of `ALU Flags` to `1` to enable showing flags from `ALU`.
 
 So the `ControlWord` for the first clock is:
 ```
-Control Word here
+011-01100-111-00-00-00-01-00-S00
 ```
 And then the control unit:
 
@@ -505,19 +563,20 @@ And then the control unit:
 
 And the `ControlWord` for the second clock is:
 ```
-Control Word here
+000-10001-111-11-00-00-00-00-S00
 ```
 
 ####  **Calculate Sinus** `sin`(0000-11-01-1-XXX-D-S)
-We need three clocks to execute this operation:
+We need two clocks to execute this operation:
 In the first clock, the control unit:
 
-- Sets `sinB` flag of the `ALU` to `1` to calculate `Sinus` of the `Rs` reigister.
+- Sets `SinB` flag of the `ALU` to `1` to `Calculate Sinus` of the data of `Rs` register.
 - Sets `ALUout_on_Databus` to `1` to put the result of `ALU` operation on the `Databus`.
+- Sets `SRLoad` of `ALU Flags` to `1` to enable showing flags from `ALU`.
 
 So the `ControlWord` for the first clock is:
 ```
-Control Word here
+011-01101-111-00-00-00-01-00-S00
 ```
 And then the control unit:
 
@@ -525,19 +584,20 @@ And then the control unit:
 
 And the `ControlWord` for the second clock is:
 ```
-Control Word here
+000-10001-111-11-00-00-00-00-S00
 ```
 
 #### **Calculate Co-Sinus** `cos`(0000-11-10-0-XXX-D-S)
-We need three clocks to execute this operation:
+We need two clocks to execute this operation:
 In the first clock, the control unit:
 
-- Sets `cosB` flag of the `ALU` to `1` to calculate `Co-Sinus` of the `Rs` reigister.
+- Sets `CosB` flag of the `ALU` to `1` to `Calculate Co-Sinus` of the data of `Rs` register.
 - Sets `ALUout_on_Databus` to `1` to put the result of `ALU` operation on the `Databus`.
+- Sets `SRLoad` of `ALU Flags` to `1` to enable showing flags from `ALU`.
 
 So the `ControlWord` for the first clock is:
 ```
-Control Word here
+011-01110-111-00-00-00-01-00-S00
 ```
 And then the control unit:
 
@@ -545,19 +605,20 @@ And then the control unit:
 
 And the `ControlWord` for the second clock is:
 ```
-Control Word here
+000-10001-111-11-00-00-00-00-S00
 ```
 
 #### **Calculate Tangent** `tan`(0000-11-10-1-XXX-D-S)
-We need three clocks to execute this operation:
+We need two clocks to execute this operation:
 In the first clock, the control unit:
 
-- Sets `tanB` flag of the `ALU` to `1` to calculate `Tangent` of the `Rs` reigister.
+- Sets `TanB` flag of the `ALU` to `1` to `Calculate Tangent` of the data of `Rs` register.
 - Sets `ALUout_on_Databus` to `1` to put the result of `ALU` operation on the `Databus`.
+- Sets `SRLoad` of `ALU Flags` to `1` to enable showing flags from `ALU`.
 
 So the `ControlWord` for the first clock is:
 ```
-Control Word here
+011-01111-111-00-00-00-01-00-S00
 ```
 And then the control unit:
 
@@ -565,18 +626,20 @@ And then the control unit:
 
 And the `ControlWord` for the second clock is:
 ```
-Control Word here
+000-10001-111-11-00-00-00-00-S00
 ```
+
 #### **Calculate Co-Tangent** `cot`(0000-11-11-0-XXX-D-S	)
-We need three clocks to execute this operation:
+We need two clocks to execute this operation:
 In the first clock, the control unit:
 
-- Sets `cotB` flag of the `ALU` to `1` to calculate `Co-Tangent` of the `Rs` reigister.
+- Sets `CotB` flag of the `ALU` to `1` to `Calculate Co-Tangent` of the data of `Rs` register.
 - Sets `ALUout_on_Databus` to `1` to put the result of `ALU` operation on the `Databus`.
+- Sets `SRLoad` of `ALU Flags` to `1` to enable showing flags from `ALU`.
 
 So the `ControlWord` for the first clock is:
 ```
-Control Word here
+011-10000-111-00-00-00-01-00-S00
 ```
 And then the control unit:
 
@@ -584,5 +647,6 @@ And then the control unit:
 
 And the `ControlWord` for the second clock is:
 ```
-Control Word here
+000-10001-111-11-00-00-00-00-S00
 ```
+
