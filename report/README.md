@@ -220,7 +220,7 @@ So for the first clock the control unit:
 So the  `ControlWord` for the first clock would look like this:
 ```
 000-10001-011-00-00-00-00-01-S00
-```
+``` 
 
 And in the next clock the control unit:
 
@@ -264,7 +264,7 @@ TODO
 #### Output From Port `oup` (0101-D-S)
 TODO
 
-#### **AND Registers** `and` (0110-D-S)
+#### **And Registers** `and` (0110-D-S)
 We need two clocks to execute this operation:
 In the first clock, the control unit:
 
@@ -285,7 +285,7 @@ And the `ControlWord` for the second clock is:
 000-10001-111-11-00-00-00-00-S00
 ```
 
-#### **OR Registers** `orr` (0111-D-S)
+#### **Or Registers** `orr` (0111-D-S)
 We need two clocks to execute this operation:
 In the first clock, the control unit:
 
@@ -306,7 +306,7 @@ And the `ControlWord` for the second clock is:
 000-10001-111-11-00-00-00-00-S00
 ```
 
-#### **NOT Register** `not` (1000-D-S)
+#### **Not Register** `not` (1000-D-S)
 We need two clocks to execute this operation:
 In the first clock, the control unit:
 
@@ -444,22 +444,74 @@ So the `ControlWord` is:
 011-00110-111-00-00-00-00-00-S00
 ```
 
-#### Move Immediate Low `mil` (1111-D-00-I)
+#### **Move Immediate Low** `mil` (1111-D-00-I)
+We need one clock to execute the operation. In this clock, the control unit:
 
-#### Move Immediate High `mih`(1111-D-01-I)
+- Sets `RFLWrite` to `1`  to write the low 8-bit of `Databus` into the `Rd` register.
 
-#### Save PC `spc` (1111-D-10-I)
+So the `ControlWord` for the first clock is:
+```
+000-10001-111-10-00-00-00-00-S00
+```
 
-#### Jump Addressed `jpa` (1111-D-11-I)
+#### **Move Immediate High** `mih` (1111-D-01-I)
+We need one clock to execute the operation. In this clock, the control unit:
+
+- Sets `RFHWrite` to `1`  to write the high 8-bit of `Databus` into the `Rd` register.
+
+So the `ControlWord` for the first clock is:
+```
+000-10001-111-01-00-00-00-00-S00
+```
+
+#### **Save PC** `spc` (1111-D-10-I)
+We need one clock to execute this operation.
+In this clock, the control:
+
+- Sets `EnablePC` to `0` to prevent `PC` register's data from getting corrupted.
+- Sets `PCplusI` to `1` to add `PC` value to immediate value.
+- Sets `Address_on_Databus` to `1` to write the result on the `Databus`.
+- Sets `RFLwrite` and `RFHwrite` to `1` to write the data on the `Rd` register.
+
+So the `ControlWord` is:
+```
+000-10001-000-11-00-00-10-00-S00
+```
+
+#### **Jump Addressed** `jpa` (1111-D-11-I)
+We need one clock to execute this, the control unit:
+
+- Sets `Rd_on_AddressUnitRSide` to `1` to put the data of the `Rd` register on the `RSide` wire of `AddressUnit`.
+- Sets `EnablePC` to `1` to load new data to the `PC` register.
+- Sets `R0plusI` to `1` to add `RSide` value to the immediate value.
+
+So the `ControlWord` is:
+```
+000-10001-010-00-00-00-00-10-S10
+```
  
-#### Jump Relative `nop`
+#### **Jump Relative** `jpr` (0000-01-11-I)
+We need one clock to execute this, the control unit:
 
-#### Branch If Zero `nop`
+- Sets `EnablePC` to `1` to load new data to the `PC` register.
+- Sets `PCplusI` to `1` to add `PC` value to the immediate value.
 
-#### Branch If Carry `nop`
+So the `ControlWord` is:
+```
+000-10001-000-00-00-00-00-00-S10
+```
+ 
+#### **Branch If Zero** `brz` (0000-10-00-I)
+For this operation, the control unit checks the `Zout` flag of `ALU Flags` and if it was set, it performs a `Jump Relative` operation.
 
-#### Add Window Pointer`awp`(0000-10-10-I)
-The controller should set the `WPadd` flag of `WP` to `1` to increment value of `WP` .So it provides the `ControlWord` value `Control Word Here` to perform this operation in one clock.
+#### **Branch If Carry** `brc` (0000-10-01-I)
+For this operation, the control unit checks the `Cout` flag of `ALU Flags` and if it was set, it performs a `Jump Relative` operation.
+
+#### **Add Window Pointer** `awp` (0000-10-10-I)
+The controller should set the `WPadd` flag of `WP` to `1` to increment value of `WP`. So it provides the `ControlWord` value below to perform this operation in one clock:
+```
+000-10001-111-00-00-01-00-00-S00
+```
 
 #### **XOR Registers** `xor` (0000-10-11-0-XXX-D-S)
 We need two clocks to execute this operation:
