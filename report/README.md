@@ -168,44 +168,62 @@ At first, `PC` is initialized to **20** where is the start of the instructions t
 Here we describe how each instruction is going to be executed in the CPU using the datapath and the available components in the SAYEH computer. Here we describe and list what should be done (the operations) after decoding each instruction to execute it. 
 
 #### **No Operation** `nop` (0000-00-00)
-We don't need to set any `ControlWord` here as we won't perform any specific operation.
-So we just go to the next  step and perform the next operations.
+We don't need to set the `ControlWord` below as we won't perform any specific operation.
+So we just go to the next  step and perform the next operations 
+```
+000-10001-111-00-00-00-00-00-S00
+```
+
 #### Halt Operation `hlt` (0000-00-01)
+TODO
 
 #### **Set Zero Flag** `szf`(0000-00-10)
-The controller should set the `ZSet` flag of `ALU` to `1` to Set the zero flag. So it provides the `ControlWord` value `Control Word Here` to perform this operation in one clock.  
+The controller should set the `ZSet` flag of `ALU` to `1` to Set the zero flag. So it provides the `ControlWord` below  to perform this operation in one clock.
+```
+000-10001-010-00-00-00-00-00-S00
+```
 
 #### **Clear Zero Flag** `czf`(0000-00-11)
 The controller should set the `ZReset` flag of `ALU` to `1` to clear the zero flag.  So it provides the `ControlWord` value `Control Word Here` to perform this operation in one clock.  
+```
+000-10001-101-00-00-00-00-00-S00
+```
 
 #### **Set Carry Flag** `scf`(0000-01-00)
-The controller should set the `CSet` flag of `ALU` to `1` to Set the zero flag. So it provides the `ControlWord` value `Control Word Here` to perform this operation in one clock.  
+The controller should set the `CSet` flag of `ALU` to `1` to Set the zero flag. So it provides the `ControlWord` below  to perform this operation in one clock.  
+```
+000-10001-100-00-00-00-00-00-S00
+```
 
 #### **Clear Carry Flag** `scf`(0000-01-01)
-The controller should set the `CReset` flag of `ALU` to `1` to Reset the zero flag. So it provides the `ControlWord` value `Control Word Here` to perform this operation in one clock.  
+The controller should set the `CReset` flag of `ALU` to `1` to Reset the zero flag. So it provides the `ControlWord`below  to perform this operation in one clock.  
+```
+000-10001-001-00-00-00-00-00-S00
+```
 
 #### **Clear Window Pointer** `cwp`(0000-01-10)
-The controller should set the `WPReset` flag of `WP` to `1` to clear the window pointer. So it provides the `ControlWord` value `Control Word Here` to perform this operation in one clock.  
+The controller should set the `WPReset` flag of `WP` to `1` to clear the window pointer. So it provides the `ControlWord` below  to perform this operation in one clock.  
+```
+000-10001-111-00-00-10-00-00-S00
+```
 
 #### **Move Register** `mvr` (0001-D-S)
-We need to clocks to execute this operation. In the first clock we move the data of the `Rs` register to `DataBus` and in the second clock we move the data in the `DataBus` to the `Rd` register. So in the first clock we:
+We need two clocks to execute this operation. In the first clock we move the data of the `Rs` register to `DataBus` and in the second clock we move the data in the `DataBus` to the `Rd` register. So in the first clock we:
 
-- Set `shadow` to `1` to let `IROut[11:8]` go to `Right` input of `RegisterFile` as selection bits for `Rd` and `Rs`  registers that are defined by `D` and `S` in instruction bit representation.
 - Set `B15to0` and `ALUout_on_Databus` to `1` to send the data of the `Rs` register to the `DataBus` through the `ALU`.
 
 So the `ControlWord` would look like this:
 ```
-Control Word here
+000-10001-111-00-00-00-01-00-S00
 ```
 
 Then in the second clock we:
 
 - Set `RFLRead` and `RFLWrite` to `1` to make the `RegisterFile` able to read all 16 bit input from `DataBus`. 
-- Let `shadow` remain `1` to perform as the previous clock.
 
 And the `ControlWord` for the second clock is:
 ```
-Control Word here
+000-10001-111-11-00-00-00-00-S00
 ```
 
 #### **Load Addressed** `lda` (0010-D-S)
