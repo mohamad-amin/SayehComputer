@@ -186,25 +186,25 @@ TODO
 #### **Set Zero Flag** `szf`(0000-00-10)
 The controller should set the `ZSet` flag of `ALU` to `1` to Set the zero flag. So it provides the `ControlWord` below  to perform this operation in one clock.
 ```
-000-10001-010-00-10-00-00-00-S00
+010-10001-111-00-10-00-00-00-S00
 ```
 
 #### **Clear Zero Flag** `czf`(0000-00-11)
 The controller should set the `ZReset` flag of `ALU` to `1` to clear the zero flag.  So it provides the `ControlWord` value `Control Word Here` to perform this operation in one clock.  
 ```
-000-10001-101-00-10-00-00-00-S00
+101-10001-111-00-10-00-00-00-S00
 ```
 
 #### **Set Carry Flag** `scf`(0000-01-00)
 The controller should set the `CSet` flag of `ALU` to `1` to Set the zero flag. So it provides the `ControlWord` below  to perform this operation in one clock.  
 ```
-000-10001-100-00-10-00-00-00-S00
+100-10001-111-00-10-00-00-00-S00
 ```
 
 #### **Clear Carry Flag** `scf`(0000-01-01)
 The controller should set the `CReset` flag of `ALU` to `1` to Reset the zero flag. So it provides the `ControlWord`below  to perform this operation in one clock.  
 ```
-000-10001-001-00-10-00-00-00-S00
+001-10001-111-00-10-00-00-00-S00
 ```
 
 #### **Clear Window Pointer** `cwp`(0000-01-10)
