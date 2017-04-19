@@ -163,7 +163,10 @@ At first, `PC` is initialized to **20** where is the start of the instructions t
 ```
 3. We decode the `IR`'s data in the Control Unit to see if it is two 8-bit instructions or one 16-bit instruction. If it was one 16-bit instruction, we move to the step 4, otherwise we move to the 6th step.
 4. The controller provides the corresponding `ControlWord` (one or more, depending on the instruction) based on the instruction (that is discussed in the next section) and some operations is performed based on the instruction (Actually, here we provide the corresponding state for the instruction and here we decode the instruction to execute and then we move to that state as the current state and the rest of executing the instruction is decided in that state).
-5. After completion of the instruction's execution, the controller provides `Control Word here` as the `ControlWord` to increment the `PC` register by `1` and to move to the next instructions (we return to the first state (*number `1`*), as you might've gussed). 
+5. After completion of the instruction's execution, the controller provides below `ControlWord` to increment the `PC` register by `1` and to move to the next instructions (we return to the first state (*number `1`*), as you might've gussed). 
+```
+000-10001-001-00-00-00-00-00-010
+```
 6. Now that we know the data of the `IR` register consists of two 8-bit instructions **and** we're going to execute the instruction in `IR[15:8]`. **For deciding that we should execute the low 8-bits of `IR` data or the high 8-bits**, we use a flag named `ShadowHigh` flag that at first is initialized to `1`; if the flag is `1` we know that we should execute `IR[15:8]` and if it's `0` we know that we should execute `IR[7:0]`. The controller provides the corresponding `ControlWord` **as in state 4** to execute the first instruction.
 **Important Note:** We modify the `ShadowHigh` flag and set it as `ShadowHigh <= ~ShadowHigh` **after executing each 8-bit instruction**. 
 7. The controller provides the `ControlWord` as in step 6, **but** this time the decoding process is based on `IR[7:0]` (because of `ShadowHigh = 0` flag) to execute the next (AKA shadow) instruction in our 16-bit data.
@@ -214,14 +217,23 @@ The controller should set the `WPReset` flag of `WP` to `1` to clear the window 
 ```
 
 #### **Move Register** `mvr` (0001-D-S)
-We need one clock to execute this operation. We first move the data of the `Rs` register to `DataBus` and then we move the data in the `DataBus` to the `Rd` register. So the control unit:
+We need two clocks to execute this operation:
+In the first clock, the control unit:
 
-- Sets `B15to0` and `ALUout_on_Databus` to `1` to send the data of the `Rs` register to the `DataBus` through the `ALU`.
-- Sets `RFLRead` and `RFLWrite` to `1` to make the `RegisterFile` able to read all 16 bit input from `DataBus`. 
+- Sets `B0to15` flag of the `ALU` to `1` to `Add` the data of `Rs` and `Rd` registers.
+- Sets `ALUout_on_Databus` to `1` to put the result of `ALU` operation on the `Databus`.
 
-So the `ControlWord` would look like this:
+So the `ControlWord` for the first clock is:
 ```
-000-10001-111-00-00-00-01-00-S00
+011-10001-111-00-00-00-01-00-S00
+```
+And then the control unit:
+
+- Sets `RFLwrite` and `RFHwrite` to `1` to enable writing to the `RegisterFile`.
+
+And the `ControlWord` for the second clock is:
+```
+011-10001-111-11-00-00-01-00-S00
 ```
 
 #### **Load Addressed** `lda` (0010-D-S)
