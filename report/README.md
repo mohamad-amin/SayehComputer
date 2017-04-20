@@ -559,6 +559,7 @@ In the first clock, the control unit:
 - Sets `AxorB` flag of the `ALU` to `1` to `Xor` the data of `Rs` and `Rd` registers.
 - Sets `ALUout_on_Databus` to `1` to put the result of `ALU` operation on the `Databus`.
 - Sets `SRLoad` of `ALU Flags` to `1` to enable showing flags from `ALU`.
+- Set `shadow` to one to get `Rd` and `Rs` from `IRout[3:0]`.
 
 So the `ControlWord` for the first clock is:
 ```
@@ -580,6 +581,7 @@ In the first clock, the control unit:
 - Sets `TwcB` flag of the `ALU` to `1` to `Calculate 2s Complement` of the data of `Rs` register.
 - Sets `ALUout_on_Databus` to `1` to put the result of `ALU` operation on the `Databus`.
 - Sets `SRLoad` of `ALU Flags` to `1` to enable showing flags from `ALU`.
+- Set `shadow` to one to get `Rd` and `Rs` from `IRout[3:0]`.
 
 So the `ControlWord` for the first clock is:
 ```
@@ -601,6 +603,7 @@ In the first clock, the control unit:
 - Sets `Rnd` flag of the `ALU` to `1` to `Generate Random Number`.
 - Sets `ALUout_on_Databus` to `1` to put the result of `ALU` operation on the `Databus`.
 - Sets `SRLoad` of `ALU Flags` to `1` to enable showing flags from `ALU`.
+- Set `shadow` to one to get `Rd` and `Rs` from `IRout[3:0]`.
 
 So the `ControlWord` for the first clock is:
 ```
@@ -622,6 +625,7 @@ In the first clock, the control unit:
 - Sets `SqrB` flag of the `ALU` to `1` to `Calculate Square Root` of the data of `Rs` register.
 - Sets `ALUout_on_Databus` to `1` to put the result of `ALU` operation on the `Databus`.
 - Sets `SRLoad` of `ALU Flags` to `1` to enable showing flags from `ALU`.
+- Set `shadow` to one to get `Rd` and `Rs` from `IRout[3:0]`.
 
 So the `ControlWord` for the first clock is:
 ```
@@ -643,6 +647,7 @@ In the first clock, the control unit:
 - Sets `AdivB` flag of the `ALU` to `1` to `Divide` the data of `Rs` and `Rd` registers.
 - Sets `ALUout_on_Databus` to `1` to put the result of `ALU` operation on the `Databus`.
 - Sets `SRLoad` of `ALU Flags` to `1` to enable showing flags from `ALU`.
+- Set `shadow` to one to get `Rd` and `Rs` from `IRout[3:0]`.
 
 So the `ControlWord` for the first clock is:
 ```
@@ -664,6 +669,7 @@ In the first clock, the control unit:
 - Sets `SinB` flag of the `ALU` to `1` to `Calculate Sinus` of the data of `Rs` register.
 - Sets `ALUout_on_Databus` to `1` to put the result of `ALU` operation on the `Databus`.
 - Sets `SRLoad` of `ALU Flags` to `1` to enable showing flags from `ALU`.
+- Set `shadow` to one to get `Rd` and `Rs` from `IRout[3:0]`.
 
 So the `ControlWord` for the first clock is:
 ```
@@ -685,6 +691,7 @@ In the first clock, the control unit:
 - Sets `CosB` flag of the `ALU` to `1` to `Calculate Co-Sinus` of the data of `Rs` register.
 - Sets `ALUout_on_Databus` to `1` to put the result of `ALU` operation on the `Databus`.
 - Sets `SRLoad` of `ALU Flags` to `1` to enable showing flags from `ALU`.
+- Set `shadow` to one to get `Rd` and `Rs` from `IRout[3:0]`.
 
 So the `ControlWord` for the first clock is:
 ```
@@ -706,6 +713,7 @@ In the first clock, the control unit:
 - Sets `TanB` flag of the `ALU` to `1` to `Calculate Tangent` of the data of `Rs` register.
 - Sets `ALUout_on_Databus` to `1` to put the result of `ALU` operation on the `Databus`.
 - Sets `SRLoad` of `ALU Flags` to `1` to enable showing flags from `ALU`.
+- Set `shadow` to one to get `Rd` and `Rs` from `IRout[3:0]`.
 
 So the `ControlWord` for the first clock is:
 ```
@@ -727,6 +735,7 @@ In the first clock, the control unit:
 - Sets `CotB` flag of the `ALU` to `1` to `Calculate Co-Tangent` of the data of `Rs` register.
 - Sets `ALUout_on_Databus` to `1` to put the result of `ALU` operation on the `Databus`.
 - Sets `SRLoad` of `ALU Flags` to `1` to enable showing flags from `ALU`.
+- Set `shadow` to one to get `Rd` and `Rs` from `IRout[3:0]`.
 
 So the `ControlWord` for the first clock is:
 ```
