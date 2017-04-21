@@ -170,7 +170,11 @@ At first, `PC` is initialized to **20** where is the start of the instructions t
 6. Now that we know the data of the `IR` register consists of two 8-bit instructions **and** we're going to execute the instruction in `IR[15:8]`. **For deciding that we should execute the low 8-bits of `IR` data or the high 8-bits**, we use a flag named `ShadowHigh` flag that at first is initialized to `1`; if the flag is `1` we know that we should execute `IR[15:8]` and if it's `0` we know that we should execute `IR[7:0]`. The controller provides the corresponding `ControlWord` **as in state 4** to execute the first instruction.
 **Important Note:** We modify the `ShadowHigh` flag and set it as `ShadowHigh <= ~ShadowHigh` **after executing each 8-bit instruction**. 
 7. The controller provides the `ControlWord` as in step 6, **but** this time the decoding process is based on `IR[7:0]` (because of `ShadowHigh = 0` flag) to execute the next (AKA shadow) instruction in our 16-bit data.
-8. After completion of the both instruction's execution, the controller provides `Control Word here` as the `ControlWord` to increment the `PC` register by `1` and to move to the next instructions (again we return to the first state (*number `1`*). 
+8. After completion of the both instruction's execution,  if the instruction hasn't changed `PC` value, the controller provides `ControlWord` below to increment the `PC` register by `1` and to move to the next instructions (again we return to the first state (*number `1`*). 
+ 
+ ```
+ 000-10001-001-00-00-00-00-00-010
+ ```
  
 **Important Note:** In instructions that are made up of two 8-bit instructions, the `shadow` flag is as the same as the `ShadowHigh` flag. In 16-bit instructions though, the `shadow` flag is always set to `0`.
 ### Designing process of each instruction
@@ -220,7 +224,7 @@ The controller should set the `WPReset` flag of `WP` to `1` to clear the window 
 We need two clocks to execute this operation:
 In the first clock, the control unit:
 
-- Sets `B0to15` flag of the `ALU` to `1` to `Add` the data of `Rs` and `Rd` registers.
+- Sets `B0to15` flag of the `ALU` to `1` to put the data of `Rs` on `ALU` out.
 - Sets `ALUout_on_Databus` to `1` to put the result of `ALU` operation on the `Databus`.
 
 So the `ControlWord` for the first clock is:
@@ -233,7 +237,7 @@ And then the control unit:
 
 And the `ControlWord` for the second clock is:
 ```
-011-10001-111-11-00-00-01-00-S00
+011-10001-111-00-00-00-01-00-S00
 ```
 
 #### **Load Addressed** `lda` (0010-D-S)
@@ -287,11 +291,35 @@ So the  `ControlWord` for this clock would look like this:
 ```
 Then we wait until the data is written onto `Memory` (`MemDataReady` maybe).
 
-#### Input From Port `inp` (0100-D-S)
-TODO
+#### **Input From Port** `inp` (0100-D-S)
+We need one clock to execute this operation.
+In this clock, the control unit:
 
-#### Output From Port `oup` (0101-D-S)
-TODO
+- Write data of `Rs` port on `Database`.
+- Enable `RFLwrite` and `RFHwrite` to write the data of databus into `Rd` register.
+So the `ControlWord` is:
+```
+000-10001-111-00-00-00-01-00-S00
+```
+
+#### **Output To Port** `oup` (0101-D-S)
+We need two clocks to execute this operation.
+In the first clock clock, the control unit:
+
+- Sets `B0to15` flag of the `ALU` to `1` to put the data of `Rs` on `ALU` out.
+- Sets `ALUout_on_Databus` to `1` to put the result of `ALU` operation on the `Databus`.
+
+So the `ControlWord` is:
+``` 
+011-10001-111-00-00-00-00-00-S00
+```
+And in the second clock, 
+
+- Data of `Databus` is asynchronously written into `Rd` port.
+So the `ControlWord` is:
+``` 
+011-10001-111-00-00-00-00-00-S00
+```
 
 #### **And Registers** `and` (0110-D-S)
 We need two clocks to execute this operation:
